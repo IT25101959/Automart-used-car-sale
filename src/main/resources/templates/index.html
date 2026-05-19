@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<!-- Hero Section -->
+<div class="hero-bg h-[600px] flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
+        <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-4 drop-shadow-lg">
+            Find Your <span class="text-blue-400">Dream Car</span> Today
+        </h1>
+        <p class="text-xl text-gray-200 mb-8 max-w-2xl mx-auto font-light drop-shadow-md">
+            Premium second-hand vehicles with verified history. Buy, sell, and trade with absolute confidence.
+        </p>
+        
+        <!-- Search Bar -->
+        <div class="max-w-3xl mx-auto bg-white p-2 rounded-full shadow-2xl flex items-center">
+            <form action="/vehicles" method="get" class="w-full flex">
+                <input type="text" name="search" placeholder="Search by brand or model (e.g., Toyota Corolla)" class="w-full px-6 py-4 rounded-l-full focus:outline-none text-gray-700 text-lg">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full transition duration-300 shadow-md">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Vehicles -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow">
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h2 class="text-3xl font-bold text-slate-800">Featured Vehicles</h2>
+            <p class="text-gray-500 mt-2">Handpicked quality cars for you</p>
+        </div>
+        <a href="/vehicles" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center transition">
+            View All <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(vehicles)}" class="text-center py-12">
+        <div class="text-gray-400 mb-4">
+            <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">No vehicles listed yet</h3>
+        <p class="text-gray-500 mt-1">Check back soon or add one from the admin panel.</p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Vehicle Card -->
+        <div th:each="vehicle : ${vehicles}" class="bg-white rounded-2xl shadow-sm hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100 flex flex-col">
+            <div class="relative h-56 bg-gray-200">
+                <img th:if="${vehicle.imageUrl != null && vehicle.imageUrl != ''}" th:src="${vehicle.imageUrl}" class="w-full h-full object-cover">
+                <img th:unless="${vehicle.imageUrl != null && vehicle.imageUrl != ''}" src="https://images.unsplash.com/photo-1542362567-b07e54358753?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow">
+                    LKR <span th:text="${#numbers.formatDecimal(vehicle.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                </div>
+            </div>
+            <div class="p-6 flex-grow flex flex-col">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="text-sm font-semibold text-blue-500 uppercase tracking-wider" th:text="${vehicle.brand}"></p>
+                        <h3 class="text-xl font-bold text-slate-900" th:text="${vehicle.model} + ' (' + ${vehicle.year} + ')'"></h3>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mt-4 mb-6">
+                    <div class="flex items-center text-gray-600 text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span th:text="${vehicle.fuelType}"></span>
+                    </div>
+                    <div class="flex items-center text-gray-600 text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span th:text="${vehicle.mileage} + ' km'"></span>
+                    </div>
+                    <div class="flex items-center text-gray-600 text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        <span th:text="${vehicle.transmission}"></span>
+                    </div>
+                    <div class="flex items-center text-gray-600 text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                        <span th:text="${vehicle.category}"></span>
+                    </div>
+                </div>
+                
+                <div class="mt-auto">
+                    <a th:href="@{/vehicle/{id}(id=${vehicle.id})}" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl transition duration-300">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
