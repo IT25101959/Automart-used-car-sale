@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My Profile')}"></head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+
+    <div th:if="${success}" class="mb-6 bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-xl flex items-center gap-2">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span th:text="${success}"></span>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-br from-slate-800 to-blue-900 px-8 py-10 flex items-center gap-6">
+            <div class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-white text-3xl font-extrabold shadow-lg"
+                 th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}"></div>
+            <div>
+                <h1 class="text-2xl font-extrabold text-white" th:text="${user.name}"></h1>
+                <p class="text-blue-300 mt-1" th:text="${user.email}"></p>
+                <span class="mt-2 inline-block px-3 py-0.5 rounded-full text-xs font-bold"
+                      th:classappend="${user.role == 'ADMIN' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}"
+                      th:text="${user.role}"></span>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <form action="/profile/update" method="POST" class="p-8 space-y-5">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                <input type="text" name="name" th:value="${user.name}" required
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                <input type="email" th:value="${user.email}" disabled
+                       class="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-gray-500 cursor-not-allowed">
+                <p class="text-xs text-gray-400 mt-1">Email cannot be changed.</p>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                <input type="text" name="phone" th:value="${user.phone}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <div th:if="${user.role == 'CUSTOMER'}">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+                <input type="text" name="address"
+                       th:value="${user.address}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div class="flex gap-4 pt-2">
+                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition">Save Changes</button>
+                <a href="/" class="flex-1 text-center border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium py-3 rounded-xl transition">Back Home</a>
+            </div>
+        </form>
+
+        <!-- Quick Links -->
+        <div class="border-t border-gray-100 px-8 py-6 bg-gray-50 flex gap-6 text-sm">
+            <a href="/bookings" class="text-blue-600 hover:underline font-medium">My Bookings →</a>
+            <a href="/vehicles" class="text-blue-600 hover:underline font-medium">Browse Inventory →</a>
+            <a th:if="${user.role == 'ADMIN'}" href="/admin" class="text-red-600 hover:underline font-medium">Admin Panel →</a>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
