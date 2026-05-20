@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Include base AutoMart head fragment (retains Tailwind, custom fonts, title) -->
+    <th:block th:replace="~{fragments :: head(${part.name})}"></th:block>
+    <!-- Load Bootstrap 5 for professional automotive e-commerce details & form styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .product-card {
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 20px;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .zoom-container {
+            overflow: hidden;
+            border-radius: 16px;
+            position: relative;
+            background: #f8f9fa;
+            border: 1px solid #f1f3f5;
+        }
+        .zoom-image {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: zoom-in;
+            height: 450px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .zoom-container:hover .zoom-image {
+            transform: scale(1.2);
+        }
+        .thumbnail-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .thumbnail-img:hover, .thumbnail-img.active {
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+        }
+        .spec-badge {
+            background-color: #f1f3f5;
+            color: #495057;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        .buy-card {
+            border: 1px solid rgba(13, 110, 253, 0.15);
+            background: linear-gradient(to bottom, #ffffff, #fcfdfe);
+            border-radius: 16px;
+        }
+        .quantity-btn {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50% !important;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 0;
+        }
+        .breadcrumb-item a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+        .breadcrumb-item a:hover {
+            color: #0d6efd;
+        }
+        /* Override basic link styles for Tailwind integration */
+        a {
+            text-decoration: none !important;
+        }
+    </style>
+</head>
+<body class="bg-light min-h-screen d-flex flex-column" style="font-family: 'Inter', sans-serif;">
+
+<!-- Tailwind Navbar (kept from primary structure to ensure consistency) -->
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container py-5 flex-grow-1">
+    
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/spare-parts">Spare Parts</a></li>
+            <li class="breadcrumb-item active text-dark" aria-current="page" th:text="${part.name}">Spark Plugs</li>
+        </ol>
+    </nav>
+
+    <!-- Flash message alerts -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" role="alert">
+        <strong th:text="${error}">An error occurred</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+        <strong th:text="${success}">Success!</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Product Layout Card -->
+    <div class="card product-card p-4 p-md-5 border-0">
+        <div class="row g-5">
+            
+            <!-- LEFT SECTION — Product Image & Interactive Gallery (FEATURE 2) -->
+            <div class="col-lg-6">
+                <!-- Large product image with Hover Zoom -->
+                <div class="zoom-container shadow-sm mb-3">
+                    <img id="main-product-image" 
+                         th:src="${part.imageUrl != null and !part.imageUrl.isEmpty() ? part.imageUrl : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}"
+                         class="zoom-image" alt="Product Image">
+                </div>
+                
+                <!-- Thumbnail gallery -->
+                <div class="d-flex gap-2 justify-content-center">
+                    <img class="thumbnail-img active" th:src="${part.imageUrl != null and !part.imageUrl.isEmpty() ? part.imageUrl : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}" onclick="changeImage(this)">
+                    <img class="thumbnail-img" src="https://images.unsplash.com/photo-1486006920555-c77dce18193b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" onclick="changeImage(this)">
+                    <img class="thumbnail-img" src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" onclick="changeImage(this)">
+                </div>
+            </div>
+            
+            <!-- RIGHT SECTION — Spare Part Details (FEATURE 2) -->
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill font-bold" th:text="${part.category}">Engine Part</span>
+                    <span class="badge bg-secondary px-3 py-2 rounded-pill font-bold" th:text="${part.brand}">NGK</span>
+                </div>
+                
+                <h1 class="h2 text-dark font-extrabold mb-1" th:text="${part.name}">Spark Plugs (Set of 4)</h1>
+                <p class="text-muted mb-3" th:text="'Manufacturer: ' + ${part.brand} + ' | Seller: ' + ${part.seller}">Sold by AutoMart Certified Parts</p>
+                
+                <div class="d-flex align-items-baseline mb-4">
+                    <span class="fs-4 text-primary font-bold me-1">LKR</span>
+                    <span class="fs-1 text-primary font-black" id="unit-price" th:text="${part.price}">8500</span>
+                </div>
+
+                <hr class="text-muted my-3 opacity-25">
+
+                <!-- Details Specs List -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <span class="text-muted d-block text-xs uppercase font-bold">Stock Availability</span>
+                        <span th:if="${part.stock > 0}" class="text-success font-semibold" th:text="'✓ In Stock (' + ${part.stock} + ' available)'">15 available</span>
+                        <span th:unless="${part.stock > 0}" class="text-danger font-semibold">✗ Out of Stock</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted d-block text-xs uppercase font-bold">Warranty Period</span>
+                        <span class="text-dark font-semibold" th:text="${part.warranty}">12 Months</span>
+                    </div>
+                    <div th:if="${part.category == 'Engine Part'}" class="col-12">
+                        <span class="text-muted d-block text-xs uppercase font-bold">Vehicle Compatibility</span>
+                        <span class="spec-badge mt-1" th:text="${part.compatibility}">Toyota/Honda</span>
+                    </div>
+                    <div th:if="${part.category == 'Body Part'}" class="col-12">
+                        <span class="text-muted d-block text-xs uppercase font-bold">Color / Finish</span>
+                        <span class="spec-badge mt-1" th:text="${part.color}">White</span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <span class="text-muted d-block text-xs uppercase font-bold mb-1">Product Description</span>
+                    <p class="text-secondary small leading-relaxed" th:text="${part.description}">High performance iridium spark plugs.</p>
+                </div>
+
+                <!-- Purchase Card Section (FEATURE 3 & 4) -->
+                <div class="card buy-card p-4 border-1 mt-4">
+                    <h4 class="h5 text-dark mb-4 font-bold">Secure Purchase Checkout</h4>
+                    
+                    <form th:action="@{/purchases/create}" method="post" class="needs-validation" novalidate>
+                        <input type="hidden" name="partId" th:value="${part.id}">
+                        
+                        <!-- 1. Quantity Selector -->
+                        <div class="mb-4">
+                            <label class="form-label text-muted text-xs uppercase font-bold">Select Quantity</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decrementQty()">-</button>
+                                <input type="number" id="quantity-input" name="quantity" value="1" min="1" 
+                                       th:max="${part.stock}" class="form-control text-center font-bold" 
+                                       style="width: 80px;" onchange="updateSummary()" required>
+                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="incrementQty()">+</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Payment Method -->
+                        <div class="mb-4">
+                            <label for="paymentMethod" class="form-label text-muted text-xs uppercase font-bold">Payment Method</label>
+                            <select class="form-select" id="paymentMethod" name="paymentMethod" onchange="updateSummary()" required>
+                                <option value="" disabled selected>Choose payment...</option>
+                                <option value="Credit Card">💳 Credit Card</option>
+                                <option value="Debit Card">💳 Debit Card</option>
+                                <option value="Cash on Delivery">💵 Cash on Delivery (COD)</option>
+                                <option value="Bank Transfer">🏦 Bank Transfer</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a valid payment method.</div>
+                        </div>
+
+                        <!-- 3. Delivery Method -->
+                        <div class="mb-4">
+                            <label class="form-label text-muted text-xs uppercase font-bold">Delivery Method</label>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deliveryMethod" id="deliveryStd" value="Standard" checked onchange="updateSummary()">
+                                    <label class="form-check-label font-semibold text-secondary" for="deliveryStd">
+                                        Standard (LKR 350, 3-5 days)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deliveryMethod" id="deliveryExp" value="Express" onchange="updateSummary()">
+                                    <label class="form-check-label font-semibold text-secondary" for="deliveryExp">
+                                        Express (LKR 750, 1-2 days)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Delivery Address Info -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label for="fullName" class="form-label text-muted text-xs uppercase font-bold">Recipient Full Name</label>
+                                <input type="text" class="form-control" id="fullName" name="fullName" th:value="${prefillName}" placeholder="John Doe" required>
+                                <div class="invalid-feedback">Full name is required.</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label text-muted text-xs uppercase font-bold">Delivery Address</label>
+                                <input type="text" class="form-control" id="address" name="address" th:value="${prefillAddress}" placeholder="123 Galle Road" required>
+                                <div class="invalid-feedback">Delivery address is required.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="city" class="form-label text-muted text-xs uppercase font-bold">City</label>
+                                <input type="text" class="form-control" id="city" name="city" placeholder="Colombo" required>
+                                <div class="invalid-feedback">City is required.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="postalCode" class="form-label text-muted text-xs uppercase font-bold">Postal Code</label>
+                                <input type="text" class="form-control" id="postalCode" name="postalCode" placeholder="00300" required>
+                                <div class="invalid-feedback">Postal code is required.</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="phone" class="form-label text-muted text-xs uppercase font-bold">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" th:value="${prefillPhone}" placeholder="0771234567" pattern="^\+?[0-9]{9,15}$" required>
+                                <div class="invalid-feedback">Please provide a valid phone number (e.g. 0771234567, 9 to 15 digits).</div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Purchase Summary (Live Javascript updates) -->
+                        <div class="bg-light p-3 rounded-3 mb-4">
+                            <h5 class="text-xs uppercase font-bold text-muted mb-3 border-bottom pb-2">Order Summary</h5>
+                            <div class="d-flex justify-content-between text-secondary mb-2">
+                                <span class="small font-semibold">Subtotal</span>
+                                <span class="small font-extrabold" id="summary-subtotal">LKR 8,500.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-secondary mb-2">
+                                <span class="small font-semibold">Delivery Fee</span>
+                                <span class="small font-extrabold" id="summary-delivery">LKR 350.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-dark font-extrabold fs-5 mt-2 border-top pt-2">
+                                <span>Total Amount</span>
+                                <span class="text-primary font-black" id="summary-total">LKR 8,850.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Buy Buttons (FEATURE 4) -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg font-bold py-3 shadow-md rounded-3" th:disabled="${part.stock <= 0}">
+                                🛒 Purchase Now
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary font-semibold py-2.5 rounded-3" disabled>
+                                Add to Cart (Standard)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Tailwind Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<script>
+    // Thumbnail Image Gallery Clicker
+    function changeImage(element) {
+        // Clear active borders
+        document.querySelectorAll('.thumbnail-img').forEach(img => {
+            img.classList.remove('active');
+        });
+        // Set clicked active
+        element.classList.add('active');
+        // Swap sources
+        document.getElementById('main-product-image').src = element.src;
+    }
+
+    // Live Summary Price Calculations
+    const unitPrice = parseFloat(document.getElementById('unit-price').innerText);
+    const qtyInput = document.getElementById('quantity-input');
+    const maxStock = parseInt(qtyInput.getAttribute('max')) || 1;
+
+    function incrementQty() {
+        let val = parseInt(qtyInput.value) || 1;
+        if (val < maxStock) {
+            qtyInput.value = val + 1;
+            updateSummary();
+        }
+    }
+
+    function decrementQty() {
+        let val = parseInt(qtyInput.value) || 1;
+        if (val > 1) {
+            qtyInput.value = val - 1;
+            updateSummary();
+        }
+    }
+
+    function updateSummary() {
+        let qty = parseInt(qtyInput.value) || 1;
+        
+        // Prevent negative or exceeding stock
+        if (qty < 1) {
+            qty = 1;
+            qtyInput.value = 1;
+        } else if (qty > maxStock) {
+            qty = maxStock;
+            qtyInput.value = maxStock;
+        }
+
+        const subtotal = qty * unitPrice;
+        
+        // Delivery fee mapping
+        const isExpress = document.getElementById('deliveryExp').checked;
+        const deliveryFee = isExpress ? 750.0 : 350.0;
+        
+        const total = subtotal + deliveryFee;
+
+        // Display results formatted
+        document.getElementById('summary-subtotal').innerText = 'LKR ' + subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('summary-delivery').innerText = 'LKR ' + deliveryFee.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('summary-total').innerText = 'LKR ' + total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    // Initialize pricing on load
+    updateSummary();
+
+    // Bootstrap Custom Form Validations
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+</body>
+</html>

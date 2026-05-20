@@ -116,4 +116,30 @@ public class SparePartController {
         ra.addFlashAttribute("success", "Part deleted.");
         return "redirect:/spare-parts";
     }
+
+    /** GET /spare-parts/{id} — view spare part detail page */
+    @GetMapping("/{id}")
+    public String viewPartDetails(@PathVariable Long id, HttpSession session, Model model) {
+        SparePart part = sparePartRepository.findById(id).orElse(null);
+        if (part == null) return "redirect:/spare-parts";
+        
+        model.addAttribute("part", part);
+        
+        // Pre-fill delivery details if user is logged in
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user != null) {
+            model.addAttribute("prefillName", user.getName());
+            model.addAttribute("prefillPhone", user.getPhone());
+            if (user instanceof Customer) {
+                model.addAttribute("prefillAddress", ((Customer) user).getAddress());
+            } else {
+                model.addAttribute("prefillAddress", "");
+            }
+        } else {
+            model.addAttribute("prefillName", "");
+            model.addAttribute("prefillPhone", "");
+            model.addAttribute("prefillAddress", "");
+        }
+        return "spare_part_details";
+    }
 }

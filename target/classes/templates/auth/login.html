@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body>
+<div class="auth-container">
+    <div class="auth-card fade-in-up">
+        <h2>Welcome Back</h2>
+        <p class="auth-subtitle">Sign in to your AutoVault account</p>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter your username" required />
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Enter your password" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
+        </form>
+        <p class="text-center" style="color:var(--text-muted);font-size:0.9rem">
+            Don't have an account? <a th:href="@{/register}" style="color:var(--primary-light)">Register here</a>
+        </p>
+    </div>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Add Vehicle')}"></head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-800 to-indigo-900 px-8 py-8">
+            <h1 class="text-3xl font-extrabold text-white">Add Vehicle to Inventory</h1>
+            <p class="text-blue-200 mt-1">Fill in all details to create a new listing.</p>
+        </div>
+
+        <form action="/admin/vehicles/new" method="POST" class="p-8 space-y-6">
+            <!-- Vehicle Type -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Vehicle Type</label>
+                <select name="type" id="vehicleType" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="CAR">Car</option>
+                    <option value="SUV">SUV</option>
+                    <option value="TRUCK">Truck</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Brand</label>
+                    <input type="text" name="brand" required placeholder="e.g., Toyota"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Model</label>
+                    <input type="text" name="model" required placeholder="e.g., Prius"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Year</label>
+                    <input type="number" name="year" required min="1990" max="2026"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Price (LKR)</label>
+                    <input type="number" name="price" required min="0" step="0.01"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Mileage (km)</label>
+                    <input type="number" name="mileage" required min="0"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Fuel Type</label>
+                    <select name="fuelType" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option>Petrol</option>
+                        <option>Diesel</option>
+                        <option>Hybrid</option>
+                        <option>Electric</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Transmission</label>
+                    <select name="transmission" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option>Automatic</option>
+                        <option>Manual</option>
+                        <option>CVT</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Number of Doors (Car)</label>
+                    <input type="number" name="numberOfDoors" value="4" min="2" max="5"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+            </div>
+
+            <div id="suvField" class="hidden">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="isFourWheelDrive" class="w-4 h-4 text-blue-600">
+                    <span class="text-sm font-semibold text-gray-700">4-Wheel Drive (SUV)</span>
+                </label>
+            </div>
+            <div id="truckField" class="hidden">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Payload Capacity (kg)</label>
+                <input type="number" name="payloadCapacity" placeholder="e.g., 1000"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Image URL</label>
+                <input type="url" name="imageUrl" placeholder="https://..."
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div class="flex gap-4 pt-2">
+                <button type="submit" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 rounded-xl shadow-lg transition">Add Vehicle</button>
+                <a href="/admin" class="flex-1 text-center border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium py-3 rounded-xl transition">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+<script>
+    const typeSelect = document.getElementById('vehicleType');
+    typeSelect.addEventListener('change', function() {
+        document.getElementById('suvField').classList.toggle('hidden', this.value !== 'SUV');
+        document.getElementById('truckField').classList.toggle('hidden', this.value !== 'TRUCK');
+    });
+</script>
+</body>
+</html>

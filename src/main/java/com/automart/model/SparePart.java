@@ -17,6 +17,10 @@ public abstract class SparePart {
     private String description;
     private String imageUrl;
 
+    private int stock = 15;
+    private String warranty = "12 Months Warranty";
+    private String seller = "AutoMart Premium Seller";
+
     public SparePart() {}
 
     public SparePart(String name, String brand, double price, String description, String imageUrl) {
@@ -46,4 +50,13 @@ public abstract class SparePart {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
+
+    public String getWarranty() { return warranty; }
+    public void setWarranty(String warranty) { this.warranty = warranty; }
+
+    public String getSeller() { return seller; }
+    public void setSeller(String seller) { this.seller = seller; }
 }
