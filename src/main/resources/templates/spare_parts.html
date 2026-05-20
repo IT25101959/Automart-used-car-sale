@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Spare Parts')}"></head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<!-- Hero Banner -->
+<div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl font-extrabold tracking-tight mb-3">Genuine Spare Parts</h1>
+        <p class="text-gray-400 text-lg mb-8">Quality components for every make and model. Engine parts, body panels, and more.</p>
+        <!-- Search bar -->
+        <div class="max-w-xl mx-auto">
+            <form action="/spare-parts" method="get" class="flex bg-white rounded-xl overflow-hidden shadow-xl">
+                <input type="text" name="search" th:value="${search}" placeholder="Search parts, brands..."
+                       class="flex-grow px-5 py-3 text-gray-800 focus:outline-none text-sm">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 text-sm font-semibold transition">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+
+    <!-- Flash messages -->
+    <div th:if="${success}" class="mb-6 bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-xl" th:text="${success}"></div>
+
+    <!-- Admin toolbar -->
+    <div th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}" class="flex justify-end mb-6">
+        <a href="/spare-parts/new" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow transition text-sm">+ Add Spare Part</a>
+    </div>
+
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(spareParts)}" class="text-center py-20">
+        <p class="text-gray-400 text-xl">No spare parts found.</p>
+        <a href="/spare-parts" class="text-blue-600 font-medium mt-2 inline-block hover:underline">Clear search</a>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div th:each="part : ${spareParts}"
+             class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover flex flex-col">
+            <div class="h-44 bg-gray-100 relative overflow-hidden">
+                <img th:if="${part.imageUrl != null and !part.imageUrl.isEmpty()}"
+                     th:src="${part.imageUrl}" class="w-full h-full object-cover">
+                <div th:unless="${part.imageUrl != null and !part.imageUrl.isEmpty()}"
+                     class="w-full h-full flex items-center justify-center text-gray-300">
+                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <span class="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded-full"
+                      th:classappend="${part.category == 'Engine Part' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}"
+                      th:text="${part.category}"></span>
+            </div>
+
+            <div class="p-5 flex-grow flex flex-col">
+                <p class="text-xs text-gray-400 uppercase font-bold mb-1" th:text="${part.brand}"></p>
+                <h3 class="font-bold text-slate-800 text-base mb-2 leading-tight" th:text="${part.name}"></h3>
+                <p class="text-xs text-gray-500 mb-4 line-clamp-2" th:text="${part.description}"></p>
+                <p class="text-xl font-extrabold text-blue-600 mb-4 mt-auto">
+                    LKR <span th:text="${#numbers.formatDecimal(part.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                </p>
+
+                <!-- Admin actions -->
+                <div th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}" class="flex gap-2">
+                    <a th:href="@{/spare-parts/{id}/edit(id=${part.id})}"
+                       class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg text-sm transition">Edit</a>
+                    <a th:href="@{/spare-parts/{id}/delete(id=${part.id})}"
+                       class="flex-1 text-center bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 rounded-lg text-sm transition"
+                       onclick="return confirm('Delete this part?')">Delete</a>
+                </div>
+                <button th:unless="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"
+                        class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg text-sm transition">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
