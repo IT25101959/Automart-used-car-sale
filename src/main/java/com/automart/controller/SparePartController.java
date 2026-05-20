@@ -4,11 +4,17 @@ import com.automart.model.*;
 import com.automart.repository.SparePartRepository;
 import com.automart.service.InventoryService;
 import com.automart.service.FileUploadService;
-import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -29,120 +35,156 @@ public class SparePartController {
 
     /** GET /spare-parts */
     @GetMapping
-    public String listParts(@RequestParam(required = false) String search, Model model) {
-        List<SparePart> parts;
-        if (search != null && !search.isBlank()) {
-            parts = sparePartRepository.findAll().stream()
-                    .filter(p -> p.getName().toLowerCase().contains(search.toLowerCase())
-                            || p.getBrand().toLowerCase().contains(search.toLowerCase()))
-                    .toList();
-        } else {
-            parts = inventoryService.getAllSpareParts();
-        }
+    public String listParts(Model model) {
+
+        List<SparePart> parts = sparePartRepository.findAll();
+
         model.addAttribute("spareParts", parts);
-        model.addAttribute("search", search);
+
         return "spare_parts";
     }
 
-    /** GET /spare-parts/new — admin add form */
-    @GetMapping("/new")
-    public String newPartForm(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null || !"ADMIN".equals(user.getRole())) return "redirect:/login";
-        return "spare_parts_form";
+    /** GET /spare-parts/{id} */
+    @GetMapping("/details/{id}")
+    public String viewPartDetails(@PathVariable Long id, Model model) {
+
+        SparePart part = sparePartRepository.findById(id).orElse(null);
+
+        if (part == null) {
+            return "redirect:/spare-parts";
+        }
+
+        model.addAttribute("part", part);
+
+        return "spare_part_details";
     }
 
-    /** POST /spare-parts/new */
-    @PostMapping("/new")
-    public String createPart(@RequestParam String type,
-                             @RequestParam String name,
-                             @RequestParam String brand,
-                             @RequestParam double price,
-                             @RequestParam String description,
-                             @RequestParam("imageFile") MultipartFile imageFile,
-                             @RequestParam(required = false) String compatibility,
-                             @RequestParam(required = false) String color,
-                             HttpSession session, RedirectAttributes ra) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null || !"ADMIN".equals(user.getRole())) return "redirect:/login";
+    /** GET /spare-parts/add */
+    @GetMapping("/add")
+    public String addPartForm(Model model) {
 
-        String savedPath = null;
-        if (imageFile != null && !imageFile.isEmpty()) {
-            savedPath = fileUploadService.saveFile(imageFile, "spareparts");
-        } else {
-            // Default placeholder
-            savedPath = "https://images.unsplash.com/photo-1486006920555-c77dce18193b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
-        }
+        model.addAttribute("part", new EnginePart());
+
+        return "spare_part_form";
+    }
+
+    /** POST /spare-parts/add */
+    @PostMapping("/add")
+    public String savePart(
+            @RequestParam String name,
+            @RequestParam String brand,
+            @RequestParam String description,
+            @RequestParam double price,
+            @RequestParam String category,
+            @RequestParam(required = false) MultipartFile imageFile,
+            RedirectAttributes ra
+    ) {
 
         SparePart part;
-        if ("ENGINE".equalsIgnoreCase(type)) {
-            part = new EnginePart(name, brand, price, description, savedPath, compatibility);
+
+        if (category.equalsIgnoreCase("Engine Parts")) {
+
+            part = new EnginePart();
+
+        } else if (category.equalsIgnoreCase("Body Parts")) {
+
+            part = new BodyPart();
+
         } else {
-            part = new BodyPart(name, brand, price, description, savedPath, color);
+
+            part = new EnginePart();
         }
+
+        part.setName(name);
+        part.setBrand(brand);
+        part.setDescription(description);
+        part.setPrice(price);
+        part.setCategory(category);
+
+        // Upload image if exists
+        if (imageFile != null && !imageFile.isEmpty()) {
+
+            try {
+
+                String imageUrl = fileUploadService.saveFile(imageFile, "spareparts");
+
+                part.setImageUrl(imageUrl);
+
+            } catch (Exception e) {
+
+                ra.addFlashAttribute("error", "Image upload failed.");
+
+                return "redirect:/spare-parts/add";
+            }
+        }
+
+        // Default stock
+        part.setStockQuantity(100);
+
         sparePartRepository.save(part);
+
         ra.addFlashAttribute("success", "Spare part added successfully.");
+
         return "redirect:/spare-parts";
     }
 
-    /** GET /spare-parts/{id}/edit */
-    @GetMapping("/{id}/edit")
-    public String editPartForm(@PathVariable Long id, HttpSession session, Model model) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null || !"ADMIN".equals(user.getRole())) return "redirect:/login";
+    /** GET /spare-parts/edit/{id} */
+    @GetMapping("/edit/{id}")
+    public String editPartForm(@PathVariable Long id, Model model) {
+
         SparePart part = sparePartRepository.findById(id).orElse(null);
-        if (part == null) return "redirect:/spare-parts";
+
+        if (part == null) {
+
+            return "redirect:/spare-parts";
+        }
+
         model.addAttribute("part", part);
+
         return "spare_parts_edit";
     }
 
-    /** POST /spare-parts/{id}/edit */
-    @PostMapping("/{id}/edit")
-    public String updatePart(@PathVariable Long id,
-                             @RequestParam String name,
-                             @RequestParam String brand,
-                             @RequestParam double price,
-                             @RequestParam String description,
-                             @RequestParam("imageFile") MultipartFile imageFile,
-                             HttpSession session, RedirectAttributes ra) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null || !"ADMIN".equals(user.getRole())) return "redirect:/login";
+    /** POST /spare-parts/update/{id} */
+    @PostMapping("/update/{id}")
+    public String updatePart(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String brand,
+            @RequestParam String description,
+            @RequestParam double price,
+            @RequestParam String category,
+            RedirectAttributes ra
+    ) {
+
         SparePart part = sparePartRepository.findById(id).orElse(null);
-        if (part != null) {
-            part.setName(name);
-            part.setBrand(brand);
-            part.setPrice(price);
-            part.setDescription(description);
-            
-            if (imageFile != null && !imageFile.isEmpty()) {
-                // Delete old local file if replaced
-                if (part.getImageUrl() != null && part.getImageUrl().startsWith("/uploads/")) {
-                    fileUploadService.deleteFile(part.getImageUrl());
-                }
-                String savedPath = fileUploadService.saveFile(imageFile, "spareparts");
-                part.setImageUrl(savedPath);
-            }
-            
-            sparePartRepository.save(part);
+
+        if (part == null) {
+
+            return "redirect:/spare-parts";
         }
-        ra.addFlashAttribute("success", "Part updated.");
+
+        part.setName(name);
+        part.setBrand(brand);
+        part.setDescription(description);
+        part.setPrice(price);
+        part.setCategory(category);
+
+        sparePartRepository.save(part);
+
+        ra.addFlashAttribute("success", "Spare part updated successfully.");
+
         return "redirect:/spare-parts";
     }
 
-    /** GET /spare-parts/{id}/delete */
-    @GetMapping("/{id}/delete")
-    public String deletePart(@PathVariable Long id, HttpSession session, RedirectAttributes ra) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null || !"ADMIN".equals(user.getRole())) return "redirect:/login";
-        SparePart part = sparePartRepository.findById(id).orElse(null);
-        if (part != null) {
-            // Delete local file on removal
-            if (part.getImageUrl() != null && part.getImageUrl().startsWith("/uploads/")) {
-                fileUploadService.deleteFile(part.getImageUrl());
-            }
-            sparePartRepository.deleteById(id);
-        }
-        ra.addFlashAttribute("success", "Part deleted.");
+    /** GET /spare-parts/delete/{id} */
+    @GetMapping("/delete/{id}")
+    public String deletePart(@PathVariable Long id,
+                             RedirectAttributes ra) {
+
+        sparePartRepository.deleteById(id);
+
+        ra.addFlashAttribute("success", "Spare part deleted successfully.");
+
         return "redirect:/spare-parts";
     }
 }
