@@ -3,486 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoMart Admin Dashboard | AutoMart</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Custom CSS -->
-    <link th:href="@{/css/dashboard.css}" rel="stylesheet" />
+    <title>Admin Dashboard | AutoMart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet"/>
 </head>
 <body class="admin-body">
 
-<!-- Admin Navigation -->
+<!-- ── Admin Navbar ── -->
 <nav class="navbar navbar-expand-lg navbar-dark admin-navbar sticky-top">
-    <div class="container px-4">
+    <div class="container-fluid px-4">
         <a class="navbar-brand admin-brand" href="/admin">
-            <i class="bi bi-speedometer2 me-2"></i>AutoMart Admin
+            <i class="bi bi-speedometer2 me-2" style="color:#60a5fa;"></i>AutoMart Admin
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-expanded="false">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="adminNavbar">
-            <ul class="navbar-nav ms-auto align-items-center gap-2">
-                <li class="nav-item">
-                    <a href="/admin/users" class="nav-link admin-nav-link"><i class="bi bi-people-fill me-1"></i>Users</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/admin/vehicles/new" class="btn btn-outline-primary btn-sm px-3 rounded-pill text-white border-primary"><i class="bi bi-plus-circle me-1"></i>Add Vehicle</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/spare-parts/new" class="btn btn-outline-info btn-sm px-3 rounded-pill text-white border-info"><i class="bi bi-plus-circle-fill me-1"></i>Add Part</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/" class="nav-link admin-nav-link"><i class="bi bi-globe me-1"></i>View Site</a>
-                </li>
-                <li class="nav-item ms-2">
-                    <a href="/logout" class="btn btn-danger btn-sm px-3 rounded-pill"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
-                </li>
+            <ul class="navbar-nav me-auto align-items-center ms-2">
+                <li class="nav-item"><a href="/admin" class="nav-link admin-nav-link px-2"><i class="bi bi-grid me-1"></i>Dashboard</a></li>
+                <li class="nav-item"><a href="/admin/users" class="nav-link admin-nav-link px-2"><i class="bi bi-people me-1"></i>Users</a></li>
+                <li class="nav-item"><a href="/admin/inventory" class="nav-link admin-nav-link px-2"><i class="bi bi-car-front me-1"></i>Inventory</a></li>
+                <li class="nav-item"><a href="/admin/spare-parts" class="nav-link admin-nav-link px-2"><i class="bi bi-tools me-1"></i>Parts</a></li>
+                <li class="nav-item"><a href="/admin/reviews" class="nav-link admin-nav-link px-2"><i class="bi bi-star me-1"></i>Reviews</a></li>
+                <li class="nav-item"><a href="/admin/bookings" class="nav-link admin-nav-link px-2"><i class="bi bi-calendar-check me-1"></i>Bookings</a></li>
+                <li class="nav-item"><a href="/admin/sell-requests" class="nav-link admin-nav-link px-2"><i class="bi bi-clipboard-check me-1"></i>Sell Requests</a></li>
+            </ul>
+            <ul class="navbar-nav align-items-center gap-2">
+                <li class="nav-item"><a href="/" class="nav-link admin-nav-link text-muted small"><i class="bi bi-globe me-1"></i>View Site</a></li>
+                <li class="nav-item"><a href="/logout" class="btn btn-danger btn-sm px-3 rounded-pill"><i class="bi bi-box-arrow-right me-1"></i>Logout</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container px-4 py-5">
+<div class="container-fluid px-4 py-5">
 
     <!-- Flash message -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show mb-5 animate-fade-in" role="alert">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show mb-4 animate-fade-in" role="alert">
         <div class="d-flex align-items-center">
             <i class="bi bi-check-circle-fill me-2 fs-5"></i>
             <span th:text="${success}"></span>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <!-- Section: Statistics Summary -->
+    <!-- ── Welcome Banner ── -->
+    <div class="admin-welcome-banner d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-4 mb-5 p-4 animate-fade-in">
+        <div>
+            <p class="text-white mb-1 small fw-semibold" style="opacity:.4;letter-spacing:.07em;text-transform:uppercase;">
+                <i class="bi bi-circle-fill me-1" style="color:#22c55e;font-size:.45rem;vertical-align:middle;"></i>System Online
+            </p>
+            <h1 class="fw-black fs-2 mb-1 text-white">
+                <i class="bi bi-speedometer2 me-2" style="color:#60a5fa;"></i>Management Dashboard
+            </h1>
+            <p class="text-white mb-0 small" style="opacity:.38;">AutoMart operations control centre — select a category below</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/" class="btn btn-sm btn-outline-light rounded-pill px-3"><i class="bi bi-globe me-1"></i>View Site</a>
+            <a href="/spare-parts/add" class="btn btn-sm btn-light text-dark rounded-pill px-3 fw-semibold"><i class="bi bi-plus me-1"></i>Add Part</a>
+            <a href="/admin/vehicles/new" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold"><i class="bi bi-plus me-1"></i>Add Vehicle</a>
+        </div>
+    </div>
+
+    <!-- ── 6 Premium Category Cards ── -->
     <div class="row g-4 mb-5">
-        <!-- Users Stat Card -->
-        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 animate-fade-in delay-50">
-            <div class="admin-card stat-card-gradient stat-card-blue p-4 d-flex flex-column align-items-center text-center h-100 justify-content-between">
-                <div class="stat-icon-wrapper text-primary mb-3">
-                    <i class="bi bi-people-fill"></i>
-                </div>
-                <div>
-                    <h3 class="stat-value mb-1 animate-counter" th:data-target="${#lists.size(users)}" th:text="${#lists.size(users)}">0</h3>
-                    <span class="stat-label text-muted">Users</span>
-                </div>
-            </div>
-        </div>
-        <!-- Vehicles Stat Card -->
-        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 animate-fade-in delay-100">
-            <div class="admin-card stat-card-gradient stat-card-green p-4 d-flex flex-column align-items-center text-center h-100 justify-content-between">
-                <div class="stat-icon-wrapper text-success mb-3">
-                    <i class="bi bi-car-front-fill"></i>
-                </div>
-                <div>
-                    <h3 class="stat-value mb-1 animate-counter" th:data-target="${#lists.size(vehicles)}" th:text="${#lists.size(vehicles)}">0</h3>
-                    <span class="stat-label text-muted">Vehicles</span>
-                </div>
-            </div>
-        </div>
-        <!-- Sell Requests Stat Card -->
-        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 animate-fade-in delay-150">
-            <div class="admin-card stat-card-gradient stat-card-amber p-4 d-flex flex-column align-items-center text-center h-100 justify-content-between">
-                <div class="stat-icon-wrapper text-warning mb-3">
-                    <i class="bi bi-clipboard-data-fill"></i>
-                </div>
-                <div>
-                    <h3 class="stat-value mb-1 animate-counter" th:data-target="${#lists.size(sellRequests)}" th:text="${#lists.size(sellRequests)}">0</h3>
-                    <span class="stat-label text-muted">Sell Requests</span>
-                </div>
-            </div>
-        </div>
-        <!-- Bookings Stat Card -->
-        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 animate-fade-in delay-200">
-            <div class="admin-card stat-card-gradient stat-card-purple p-4 d-flex flex-column align-items-center text-center h-100 justify-content-between">
-                <div class="stat-icon-wrapper text-info mb-3" style="color: #c084fc !important;">
-                    <i class="bi bi-calendar3"></i>
-                </div>
-                <div>
-                    <h3 class="stat-value mb-1 animate-counter" th:data-target="${#lists.size(bookings)}" th:text="${#lists.size(bookings)}">0</h3>
-                    <span class="stat-label text-muted">Bookings</span>
-                </div>
-            </div>
-        </div>
-        <!-- Reviews Stat Card -->
-        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 animate-fade-in delay-250">
-            <div class="admin-card stat-card-gradient stat-card-orange p-4 d-flex flex-column align-items-center text-center h-100 justify-content-between">
-                <div class="stat-icon-wrapper text-danger mb-3" style="color: #fb923c !important;">
-                    <i class="bi bi-star-fill"></i>
-                </div>
-                <div>
-                    <h3 class="stat-value mb-1 animate-counter" th:data-target="${#lists.size(reviews)}" th:text="${#lists.size(reviews)}">0</h3>
-                    <span class="stat-label text-muted">Reviews</span>
-                </div>
-            </div>
-        </div>
-        <!-- Spare Parts Stat Card -->
-        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 animate-fade-in delay-300">
-            <div class="admin-card stat-card-gradient stat-card-teal p-4 d-flex flex-column align-items-center text-center h-100 justify-content-between">
-                <div class="stat-icon-wrapper mb-3" style="color: #2dd4bf !important;">
-                    <i class="bi bi-tools"></i>
-                </div>
-                <div>
-                    <h3 class="stat-value mb-1 animate-counter" th:data-target="${#lists.size(spareParts)}" th:text="${#lists.size(spareParts)}">0</h3>
-                    <span class="stat-label text-muted">Parts</span>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Section: Sell Requests -->
-    <div class="mb-5 animate-fade-in delay-100">
-        <div class="admin-section-header">
-            <div>
-                <h2 class="admin-section-title"><i class="bi bi-clipboard-check text-warning"></i>Sell Requests</h2>
-                <span class="admin-section-subtitle">Manage customer vehicle marketplace selling proposals</span>
-            </div>
-        </div>
-
-        <div th:if="${#lists.isEmpty(sellRequests)}" class="admin-card p-5 text-center text-muted fs-6">
-            <i class="bi bi-inbox fs-1 d-block mb-3 text-secondary"></i>
-            No active sell requests pending moderation.
-        </div>
-
-        <div class="row g-4" th:unless="${#lists.isEmpty(sellRequests)}">
-            <div class="col-12 col-md-6 col-lg-4" th:each="req : ${sellRequests}">
-                <div class="admin-card d-flex flex-column h-100">
-                    <div class="car-card-img-wrapper">
-                        <!-- Marketplace default car vector/image mockup -->
-                        <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Vehicle Marketplace Listing" class="car-card-img" />
-                        <span class="position-absolute top-3 end-3 glass-badge" 
-                              th:classappend="${req.status == 'APPROVED' ? 'glass-badge-approved' : (req.status == 'REJECTED' ? 'glass-badge-rejected' : 'glass-badge-pending')}"
-                              th:text="${req.status}">PENDING</span>
+        <!-- Card 1: User Management -->
+        <div class="col-12 col-sm-6 col-xl-4 animate-fade-in delay-50">
+            <a href="/admin/users" class="admin-category-card d-block text-decoration-none h-100"
+               style="background:linear-gradient(135deg,#0f172a 0%,#1e40af 100%);">
+                <div class="admin-cat-inner">
+                    <div class="admin-cat-icon"><i class="bi bi-people-fill" style="color:#93c5fd;"></i></div>
+                    <span class="admin-cat-label">Platform Users</span>
+                    <h3 class="admin-cat-title">User Management</h3>
+                    <p class="admin-cat-desc">Manage registered accounts, assign roles, ban/unban users, and control platform access permissions.</p>
+                    <div class="admin-cat-stats">
+                        <span class="admin-cat-num animate-counter" th:data-target="${#lists.size(users)}" th:text="${#lists.size(users)}">0</span>
+                        <span class="admin-cat-stat-lbl">Registered accounts</span>
                     </div>
-                    <div class="card-body p-4 d-flex flex-column flex-grow-1 justify-content-between">
+                    <div class="admin-cat-btn"><i class="bi bi-arrow-right-circle"></i>Open Section</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 2: Inventory Management -->
+        <div class="col-12 col-sm-6 col-xl-4 animate-fade-in delay-100">
+            <a href="/admin/inventory" class="admin-category-card d-block text-decoration-none h-100"
+               style="background:linear-gradient(135deg,#052e16 0%,#166534 100%);">
+                <div class="admin-cat-inner">
+                    <div class="admin-cat-icon"><i class="bi bi-car-front-fill" style="color:#86efac;"></i></div>
+                    <span class="admin-cat-label">Showroom</span>
+                    <h3 class="admin-cat-title">Inventory Management</h3>
+                    <p class="admin-cat-desc">Browse, add, edit, and remove vehicle listings. Manage prices, specs, and showroom availability.</p>
+                    <div class="admin-cat-stats">
+                        <span class="admin-cat-num animate-counter" th:data-target="${#lists.size(vehicles)}" th:text="${#lists.size(vehicles)}">0</span>
+                        <span class="admin-cat-stat-lbl">Vehicles in stock</span>
+                    </div>
+                    <div class="admin-cat-btn"><i class="bi bi-arrow-right-circle"></i>Open Section</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 3: Spare Parts -->
+        <div class="col-12 col-sm-6 col-xl-4 animate-fade-in delay-150">
+            <a href="/admin/spare-parts" class="admin-category-card d-block text-decoration-none h-100"
+               style="background:linear-gradient(135deg,#2e1065 0%,#6d28d9 100%);">
+                <div class="admin-cat-inner">
+                    <div class="admin-cat-icon"><i class="bi bi-tools" style="color:#c4b5fd;"></i></div>
+                    <span class="admin-cat-label">Parts &amp; Orders</span>
+                    <h3 class="admin-cat-title">Spare Part Section</h3>
+                    <p class="admin-cat-desc">Add new spare parts, manage the catalog, and process customer spare part purchase orders.</p>
+                    <div class="admin-cat-stats d-flex gap-4 align-items-end">
                         <div>
-                            <h4 class="mb-2 fs-5" th:text="${req.brand} + ' ' + ${req.model} + ' (' + ${req.year} + ')'">Toyota Corolla (2020)</h4>
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="avatar-circle bg-secondary me-2" style="width: 32px; height: 32px; font-size: 0.85rem;" 
-                                     th:text="${req.seller != null ? #strings.substring(req.seller.name, 0, 1).toUpperCase() : 'S'}">S</div>
-                                <div class="small">
-                                    <span class="text-muted d-block">Seller</span>
-                                    <strong class="fw-semibold" th:text="${req.seller != null ? req.seller.name : 'N/A'}">Seller Name</strong>
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <span class="text-muted d-block small">Expected Price</span>
-                                <h5 class="text-success font-bold mb-0">LKR <span th:text="${#numbers.formatDecimal(req.expectedPrice, 1, 'COMMA', 0, 'POINT')}">5,000,000</span></h5>
-                            </div>
+                            <span class="admin-cat-num animate-counter" th:data-target="${#lists.size(spareParts)}" th:text="${#lists.size(spareParts)}">0</span>
+                            <span class="admin-cat-stat-lbl">Parts listed</span>
                         </div>
-
                         <div>
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn admin-btn admin-btn-outline flex-grow-1" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${req.id}">
-                                    <i class="bi bi-info-circle me-1"></i>Details
-                                </button>
-                                <form th:action="@{/admin/sellrequest/update/{id}(id=${req.id})}" method="POST" class="d-inline flex-grow-1" th:if="${req.status == 'PENDING'}">
-                                    <input type="hidden" name="status" value="APPROVED">
-                                    <button type="submit" class="btn admin-btn admin-btn-success w-100">
-                                        <i class="bi bi-check-circle me-1"></i>Approve
-                                    </button>
-                                </form>
-                                <form th:action="@{/admin/sellrequest/update/{id}(id=${req.id})}" method="POST" class="d-inline flex-grow-1" th:if="${req.status == 'PENDING'}">
-                                    <input type="hidden" name="status" value="REJECTED">
-                                    <button type="submit" class="btn admin-btn admin-btn-danger w-100">
-                                        <i class="bi bi-x-circle me-1"></i>Reject
-                                    </button>
-                                </form>
-                            </div>
+                            <span class="admin-cat-num-sm animate-counter" th:data-target="${#lists.size(purchases)}" th:text="${#lists.size(purchases)}">0</span>
+                            <span class="admin-cat-stat-lbl">Orders</span>
                         </div>
                     </div>
+                    <div class="admin-cat-btn mt-3"><i class="bi bi-arrow-right-circle"></i>Open Section</div>
                 </div>
-
-                <!-- Modal for Sell Request Details -->
-                <div class="modal fade" th:id="'detailsModal-' + ${req.id}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content admin-modal-content">
-                            <div class="modal-header admin-modal-header d-flex justify-content-between align-items-center">
-                                <h5 class="modal-title font-bold"><i class="bi bi-file-earmark-text text-warning me-2"></i>Request Specifications</h5>
-                                <button type="button" class="btn-close admin-modal-close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <div class="mb-3">
-                                    <strong class="text-muted d-block small">Vehicle Model</strong>
-                                    <span class="fs-5 fw-semibold" th:text="${req.brand} + ' ' + ${req.model} + ' (' + ${req.year} + ')'">Toyota Corolla</span>
-                                </div>
-                                <div class="mb-3">
-                                    <strong class="text-muted d-block small">Expected Valuation</strong>
-                                    <span class="text-success fs-5 font-bold">LKR <span th:text="${#numbers.formatDecimal(req.expectedPrice, 1, 'COMMA', 0, 'POINT')}">5,000,000</span></span>
-                                </div>
-                                <div class="mb-3" th:if="${req.seller != null}">
-                                    <strong class="text-muted d-block small">Seller Profile</strong>
-                                    <span class="d-block fw-semibold" th:text="${req.seller.name}">Customer Name</span>
-                                    <span class="text-secondary d-block small" th:text="${req.seller.email}">email@domain.com</span>
-                                    <span class="text-secondary d-block small" th:text="${req.seller.phone}">+94 77 123 4567</span>
-                                </div>
-                                <div class="mb-1">
-                                    <strong class="text-muted d-block small">Seller Description & Notes</strong>
-                                    <p class="admin-details-box p-3 rounded mb-0" style="white-space: pre-wrap;" th:text="${req.details}">No additional notes provided.</p>
-                                </div>
-                            </div>
-                            <div class="modal-footer admin-modal-footer">
-                                <button type="button" class="btn admin-btn admin-btn-outline" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Section: Bookings -->
-    <div class="mb-5 animate-fade-in delay-150">
-        <div class="admin-section-header">
-            <div>
-                <h2 class="admin-section-title"><i class="bi bi-calendar-event text-info"></i>Bookings Schedule</h2>
-                <span class="admin-section-subtitle">Track and confirm customer test drive schedules</span>
-            </div>
+            </a>
         </div>
 
-        <div th:if="${#lists.isEmpty(bookings)}" class="admin-card p-5 text-center text-muted fs-6">
-            <i class="bi bi-calendar-x fs-1 d-block mb-3 text-secondary"></i>
-            No bookings scheduled at this time.
-        </div>
-
-        <div class="row g-4" th:unless="${#lists.isEmpty(bookings)}">
-            <div class="col-12 col-md-6 col-lg-4" th:each="b : ${bookings}">
-                <div class="admin-card p-4 d-flex flex-column justify-content-between h-100">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle me-2" style="background: linear-gradient(135deg, #10b981, #0ea5e9); width: 40px; height: 40px; font-size: 0.95rem;"
-                                     th:text="${b.customer != null ? #strings.substring(b.customer.name, 0, 1).toUpperCase() : 'N'}">N</div>
-                                <div>
-                                    <h5 class="mb-0 fs-6" th:text="${b.customer != null ? b.customer.name : 'N/A'}">Customer Name</h5>
-                                    <span class="text-secondary small d-block" th:text="${b.customer != null ? b.customer.phone : 'No Phone'}">phone</span>
-                                </div>
-                            </div>
-                            <span class="glass-badge" 
-                                  th:classappend="${b.status == 'CONFIRMED' ? 'glass-badge-approved' : (b.status == 'CANCELLED' ? 'glass-badge-rejected' : 'glass-badge-pending')}"
-                                  th:text="${b.status}">PENDING</span>
-                        </div>
-
-                        <div class="divider"></div>
-
-                        <div class="mb-3">
-                            <span class="text-muted d-block small">Booked Vehicle</span>
-                            <strong class="fs-6 fw-semibold" th:text="${b.vehicle != null ? b.vehicle.brand + ' ' + b.vehicle.model : 'N/A'}">Vehicle model</strong>
-                        </div>
-                        <div class="mb-4">
-                            <span class="text-muted d-block small">Booking Date & Time</span>
-                            <div>
-                                <i class="bi bi-clock me-1 text-info"></i>
-                                <span th:text="${#temporals.format(b.bookingDate, 'yyyy-MM-dd HH:mm')}">2026-05-20 14:00</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="d-flex gap-2">
-                            <a th:if="${b.status == 'PENDING'}" th:href="@{/bookings/{id}/confirm(id=${b.id})}" class="btn admin-btn admin-btn-success flex-grow-1">
-                                <i class="bi bi-check2-circle me-1"></i>Confirm
-                            </a>
-                            <a th:if="${b.status == 'PENDING' or b.status == 'CONFIRMED'}" th:href="@{/bookings/{id}/cancel(id=${b.id})}" class="btn admin-btn admin-btn-danger flex-grow-1" onclick="return confirm('Cancel this booking?')">
-                                <i class="bi bi-x-circle me-1"></i>Cancel
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section: Vehicle Inventory -->
-    <div class="mb-5 animate-fade-in delay-200">
-        <div class="admin-section-header">
-            <div>
-                <h2 class="admin-section-title"><i class="bi bi-car-front text-success"></i>Vehicle Inventory</h2>
-                <span class="admin-section-subtitle">Real-time used car listings and showroom availability</span>
-            </div>
-            <a href="/admin/vehicles/new" class="btn admin-btn admin-btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Vehicle</a>
-        </div>
-
-        <div th:if="${#lists.isEmpty(vehicles)}" class="admin-card p-5 text-center text-muted fs-6">
-            <i class="bi bi-car-front fs-1 d-block mb-3 text-secondary"></i>
-            Showroom inventory is currently empty.
-        </div>
-
-        <div class="row g-4" th:unless="${#lists.isEmpty(vehicles)}">
-            <div class="col-12 col-md-6 col-lg-4" th:each="v : ${vehicles}">
-                <div class="admin-card d-flex flex-column h-100">
-                    <div class="car-card-img-wrapper">
-                        <!-- Vehicle Cover Image -->
-                        <img th:src="${#strings.isEmpty(v.imageUrl) ? 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' : v.imageUrl}" 
-                             alt="Vehicle Listing Cover" class="car-card-img" />
-                        <span class="position-absolute top-3 end-3 glass-badge glass-badge-role-customer" style="z-index: 2;" th:text="${v.category}">Sedan</span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column flex-grow-1 justify-content-between">
+        <!-- Card 4: Reviews & Support -->
+        <div class="col-12 col-sm-6 col-xl-4 animate-fade-in delay-200">
+            <a href="/admin/reviews" class="admin-category-card d-block text-decoration-none h-100"
+               style="background:linear-gradient(135deg,#431407 0%,#c2410c 100%);">
+                <div class="admin-cat-inner">
+                    <div class="admin-cat-icon"><i class="bi bi-star-fill" style="color:#fdba74;"></i></div>
+                    <span class="admin-cat-label">Reviews &amp; Messages</span>
+                    <h3 class="admin-cat-title">Reviews &amp; Ratings</h3>
+                    <p class="admin-cat-desc">Moderate customer vehicle reviews and reply to customer support enquiry messages.</p>
+                    <div class="admin-cat-stats d-flex gap-4 align-items-end">
                         <div>
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h4 class="fs-5 mb-0" th:text="${v.brand} + ' ' + ${v.model}">Brand Model</h4>
-                                <span class="badge bg-secondary border border-secondary border-opacity-25 text-white" th:text="${v.year}">2020</span>
-                            </div>
-                            
-                            <h5 class="text-success font-bold mb-3">LKR <span th:text="${#numbers.formatDecimal(v.price, 1, 'COMMA', 0, 'POINT')}">4,500,000</span></h5>
-                            
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="spec-pill"><i class="bi bi-fuel-pump text-warning"></i><span th:text="${v.fuelType}">Petrol</span></span>
-                                <span class="spec-pill"><i class="bi bi-gear text-info"></i><span th:text="${v.transmission}">Auto</span></span>
-                                <span class="spec-pill"><i class="bi bi-speedometer text-accent"></i><span th:text="${#numbers.formatDecimal(v.mileage, 1, 'COMMA', 0, 'POINT')} + ' km'">30k</span></span>
-                            </div>
-
-                            <div class="d-flex align-items-center mb-4">
-                                <i class="bi bi-person-badge text-muted me-2"></i>
-                                <span class="text-secondary small">Seller: <strong th:text="${v.owner != null ? v.owner.name : 'AutoMart Stock'}">AutoMart</strong></span>
-                            </div>
+                            <span class="admin-cat-num animate-counter" th:data-target="${#lists.size(reviews)}" th:text="${#lists.size(reviews)}">0</span>
+                            <span class="admin-cat-stat-lbl">Reviews</span>
                         </div>
-
                         <div>
-                            <div class="d-flex gap-2">
-                                <a th:href="@{/vehicle/{id}(id=${v.id})}" class="btn admin-btn admin-btn-outline flex-grow-1 text-center">
-                                    <i class="bi bi-eye"></i> View
-                                </a>
-                                <a th:href="@{/admin/vehicles/{id}/edit(id=${v.id})}" class="btn admin-btn admin-btn-primary flex-grow-1 text-center">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <a th:href="@{/admin/vehicles/{id}/delete(id=${v.id})}" class="btn admin-btn admin-btn-danger flex-grow-1 text-center" onclick="return confirm('Delete this vehicle?')">
-                                    <i class="bi bi-trash"></i> Delete
-                                </a>
-                            </div>
+                            <span class="admin-cat-num-sm animate-counter" th:data-target="${#lists.size(messages)}" th:text="${#lists.size(messages)}">0</span>
+                            <span class="admin-cat-stat-lbl">Messages</span>
                         </div>
                     </div>
+                    <div class="admin-cat-btn mt-3"><i class="bi bi-arrow-right-circle"></i>Open Section</div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section: Customer Reviews -->
-    <div class="mb-5 animate-fade-in delay-250">
-        <div class="admin-section-header">
-            <div>
-                <h2 class="admin-section-title"><i class="bi bi-chat-right-text text-danger"></i>Customer Reviews</h2>
-                <span class="admin-section-subtitle">Moderation panel for user comments and star feedback</span>
-            </div>
+            </a>
         </div>
 
-        <div th:if="${#lists.isEmpty(reviews)}" class="admin-card p-5 text-center text-muted fs-6">
-            <i class="bi bi-chat-square-dots fs-1 d-block mb-3 text-secondary"></i>
-            No reviews published yet.
-        </div>
-
-        <div class="row g-4" th:unless="${#lists.isEmpty(reviews)}">
-            <div class="col-12 col-md-6 col-lg-4" th:each="r : ${reviews}">
-                <div class="admin-card p-4 d-flex flex-column justify-content-between h-100">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle me-2" 
-                                     style="background: linear-gradient(135deg, #f59e0b, #ef4444); width: 40px; height: 40px; font-size: 0.95rem;" 
-                                     th:text="${r.user != null ? #strings.substring(r.user.name, 0, 1).toUpperCase() : 'N'}">U</div>
-                                <div>
-                                    <h5 class="mb-0 fs-6" th:text="${r.user != null ? r.user.name : 'Anonymous'}">Customer Name</h5>
-                                    <span class="text-muted d-block small" th:text="${r.createdAt != null ? #temporals.format(r.createdAt, 'yyyy-MM-dd') : 'No Date'}">date</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Dynamic rating stars visual -->
-                            <div class="stars-display">
-                                <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                    <i th:class="${star <= r.rating ? 'bi bi-star-fill' : 'bi bi-star'}"></i>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="divider"></div>
-
-                        <div class="mb-3">
-                            <span class="text-muted d-block small">Reviewed Vehicle</span>
-                            <span class="text-info font-bold small" th:text="${r.vehicle != null ? r.vehicle.brand + ' ' + r.vehicle.model : 'N/A'}">Toyota Corolla</span>
-                        </div>
-                        
-                        <p class="admin-details-box p-3 rounded small mb-4" 
-                           style="min-height: 80px;" th:text="${r.content}">Review review text goes here.</p>
+        <!-- Card 5: Bookings -->
+        <div class="col-12 col-sm-6 col-xl-4 animate-fade-in delay-250">
+            <a href="/admin/bookings" class="admin-category-card d-block text-decoration-none h-100"
+               style="background:linear-gradient(135deg,#0c4a6e 0%,#0284c7 100%);">
+                <div class="admin-cat-inner">
+                    <div class="admin-cat-icon"><i class="bi bi-calendar-check-fill" style="color:#7dd3fc;"></i></div>
+                    <span class="admin-cat-label">Reservations</span>
+                    <h3 class="admin-cat-title">Bookings &amp; Reservations</h3>
+                    <p class="admin-cat-desc">Track, confirm, and cancel customer test drive appointments and booking schedules.</p>
+                    <div class="admin-cat-stats">
+                        <span class="admin-cat-num animate-counter" th:data-target="${#lists.size(bookings)}" th:text="${#lists.size(bookings)}">0</span>
+                        <span class="admin-cat-stat-lbl">Test drive bookings</span>
                     </div>
-
-                    <div>
-                        <a th:href="@{/reviews/{id}/delete(id=${r.id})}" class="btn admin-btn admin-btn-danger w-100" onclick="return confirm('Delete this review?')">
-                            <i class="bi bi-trash-fill me-1"></i>Delete Review
-                        </a>
-                    </div>
+                    <div class="admin-cat-btn"><i class="bi bi-arrow-right-circle"></i>Open Section</div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section: Registered Users Quick List -->
-    <div class="mb-5 animate-fade-in delay-300">
-        <div class="admin-section-header">
-            <div>
-                <h2 class="admin-section-title"><i class="bi bi-people text-primary"></i>Registered Users</h2>
-                <span class="admin-section-subtitle">Quick view of user database accounts and profiles</span>
-            </div>
-            <a href="/admin/users" class="btn admin-btn admin-btn-outline"><i class="bi bi-sliders me-1"></i>Manage All</a>
+            </a>
         </div>
 
-        <div class="row g-4">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3" th:each="u : ${users}">
-                <div class="admin-card p-4 d-flex flex-column justify-content-between h-100">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="avatar-circle" style="background: linear-gradient(135deg, #3b82f6, #6366f1);" 
-                             th:text="${#strings.substring(u.name, 0, 1).toUpperCase()}">U</div>
-                        <span class="glass-badge" 
-                              th:classappend="${u.role == 'ADMIN' ? 'glass-badge-role-admin' : 'glass-badge-role-customer'}" 
-                              th:text="${u.role}">CUSTOMER</span>
+        <!-- Card 6: Sell Car Requests -->
+        <div class="col-12 col-sm-6 col-xl-4 animate-fade-in delay-300">
+            <a href="/admin/sell-requests" class="admin-category-card d-block text-decoration-none h-100"
+               style="background:linear-gradient(135deg,#451a03 0%,#b45309 100%);">
+                <div class="admin-cat-inner">
+                    <div class="admin-cat-icon"><i class="bi bi-clipboard-data-fill" style="color:#fcd34d;"></i></div>
+                    <span class="admin-cat-label">Marketplace</span>
+                    <h3 class="admin-cat-title">Sell Car</h3>
+                    <p class="admin-cat-desc">Review customer vehicle selling proposals and approve or reject with detailed feedback.</p>
+                    <div class="admin-cat-stats">
+                        <span class="admin-cat-num animate-counter" th:data-target="${#lists.size(sellRequests)}" th:text="${#lists.size(sellRequests)}">0</span>
+                        <span class="admin-cat-stat-lbl">Sell requests</span>
                     </div>
-
-                    <div class="mb-3">
-                        <h5 class="fs-6 mb-1" th:text="${u.name}">Full Name</h5>
-                        <span class="text-secondary small d-block" style="word-break: break-all;" th:text="${u.email}">email@domain.com</span>
-                        <span class="text-muted small d-block mt-2" th:text="${u.phone != null ? u.phone : 'No Phone Number'}">phone</span>
-                    </div>
-
-                    <div class="divider"></div>
-
-                    <div class="d-flex gap-2">
-                        <!-- Custom visual mockup actions for dashboard quick list, using delete linked correctly -->
-                        <button type="button" class="btn admin-btn admin-btn-outline flex-grow-1 py-1" onclick="alert('User profile updates are securely managed on the full Users management panel.')">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <a th:href="@{/admin/users/{id}/delete(id=${u.id})}" class="btn admin-btn admin-btn-danger flex-grow-1 py-1" onclick="return confirm('Delete this user account?')">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </div>
+                    <div class="admin-cat-btn"><i class="bi bi-arrow-right-circle"></i>Open Section</div>
                 </div>
-            </div>
+            </a>
         </div>
+
     </div>
 
 </div>
 
-<!-- Bootstrap 5 Bundle JS -->
+<!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Custom JS: Count-up Micro-animations -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const counters = document.querySelectorAll('.animate-counter');
-        counters.forEach(counter => {
-            const target = +counter.getAttribute('data-target');
+        document.querySelectorAll('.animate-counter').forEach(el => {
+            const target = +el.getAttribute('data-target');
+            if (!target) return;
             let count = 0;
             const speed = Math.max(1, Math.floor(target / 30));
-            const updateCount = () => {
+            const update = () => {
                 count += speed;
-                if (count >= target) {
-                    counter.innerText = target;
-                } else {
-                    counter.innerText = count;
-                    setTimeout(updateCount, 20);
-                }
+                if (count >= target) { el.innerText = target; }
+                else { el.innerText = count; setTimeout(update, 20); }
             };
-            updateCount();
+            update();
         });
     });
 </script>

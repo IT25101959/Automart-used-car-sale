@@ -5,6 +5,49 @@
 
 <nav th:replace="~{fragments :: navbar}"></nav>
 
+<!-- ── Animated Success Toast ── -->
+<div th:if="${success}" id="successToast"
+     class="fixed top-5 right-5 z-50 w-full max-w-sm pointer-events-none" style="animation: slideInRight 0.5s ease forwards;">
+    <div class="bg-white rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden pointer-events-auto">
+        <div class="flex items-start gap-4 px-5 py-4">
+            <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <div class="flex-1 pt-0.5">
+                <p class="text-sm font-bold text-slate-800 mb-0.5">Request Submitted!</p>
+                <p class="text-xs text-slate-500" th:text="${success}"></p>
+            </div>
+            <button onclick="document.getElementById('successToast').remove()" class="text-slate-300 hover:text-slate-500 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="h-1 bg-emerald-500 toast-shrink"></div>
+    </div>
+</div>
+
+<style>
+@keyframes slideInRight {
+    from { transform: translateX(110%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+}
+.toast-shrink {
+    animation: shrinkBar 5s linear forwards;
+    transform-origin: left;
+}
+@keyframes shrinkBar {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+</style>
+<script>
+    setTimeout(() => {
+        const t = document.getElementById('successToast');
+        if (t) { t.style.transition = 'opacity 0.5s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }
+    }, 5000);
+</script>
+
 <!-- Hero -->
 <div class="bg-gradient-to-r from-slate-900 to-blue-900 text-white py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

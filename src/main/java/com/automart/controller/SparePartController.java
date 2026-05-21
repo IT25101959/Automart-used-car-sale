@@ -33,14 +33,26 @@ public class SparePartController {
     @Autowired
     private FileUploadService fileUploadService;
 
-    /** GET /spare-parts */
+    /** GET /spare-parts — list all parts with optional ?category and ?search filters */
     @GetMapping
-    public String listParts(Model model) {
+    public String listParts(@RequestParam(required = false) String category,
+                            @RequestParam(required = false) String search,
+                            Model model) {
+        String selected = (category == null || category.isBlank() || category.equalsIgnoreCase("All Parts"))
+                ? "All Parts" : category;
 
-        List<SparePart> parts = sparePartRepository.findAll();
+        List<SparePart> parts;
+        if (search != null && !search.isBlank()) {
+            parts = sparePartRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search);
+        } else if (!selected.equals("All Parts")) {
+            parts = sparePartRepository.findByCategoryIgnoreCase(selected);
+        } else {
+            parts = sparePartRepository.findAll();
+        }
 
         model.addAttribute("spareParts", parts);
-
+        model.addAttribute("selectedCategory", selected);
+        model.addAttribute("search", search);
         return "spare_parts";
     }
 
@@ -65,7 +77,7 @@ public class SparePartController {
 
         model.addAttribute("part", new EnginePart());
 
-        return "spare_part_form";
+        return "spare_parts_form";
     }
 
     /** POST /spare-parts/add */
@@ -75,6 +87,9 @@ public class SparePartController {
             @RequestParam String brand,
             @RequestParam String description,
             @RequestParam double price,
+            @RequestParam int stockQuantity,
+            @RequestParam(required = false) String compatibility,
+            @RequestParam(required = false) String warranty,
             @RequestParam String category,
             @RequestParam(required = false) MultipartFile imageFile,
             RedirectAttributes ra
@@ -185,6 +200,48 @@ public class SparePartController {
 
         ra.addFlashAttribute("success", "Spare part deleted successfully.");
 
+        return "redirect:/spare-parts";
+    }
+
+    /** POST /spare-parts/{id}/edit — full update including stock, compatibility, warranty, image */
+    @PostMapping("/{id}/edit")
+    public String editPart(@PathVariable Long id,
+                           @RequestParam String name,
+                           @RequestParam String brand,
+                           @RequestParam String description,
+                           @RequestParam double price,
+                           @RequestParam String category,
+                           @RequestParam int stockQuantity,
+                           @RequestParam(required = false) String compatibility,
+                           @RequestParam(required = false) String warranty,
+                           @RequestParam(required = false) String color,
+                           @RequestParam(required = false) MultipartFile imageFile,
+                           RedirectAttributes ra) {
+        SparePart part = sparePartRepository.findById(id).orElse(null);
+        if (part == null) return "redirect:/spare-parts";
+
+        part.setName(name);
+        part.setBrand(brand);
+        part.setDescription(description);
+        part.setPrice(price);
+        part.setCategory(category);
+        part.setStockQuantity(stockQuantity);
+        if (compatibility != null) part.setCompatibility(compatibility);
+        if (warranty != null) part.setWarranty(warranty);
+        if (part instanceof BodyPart bp && color != null) bp.setColor(color);
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                String imageUrl = fileUploadService.saveFile(imageFile, "spareparts");
+                part.setImageUrl(imageUrl);
+            } catch (Exception e) {
+                ra.addFlashAttribute("error", "Image upload failed: " + e.getMessage());
+                return "redirect:/spare-parts/edit/" + id;
+            }
+        }
+
+        sparePartRepository.save(part);
+        ra.addFlashAttribute("success", "Spare part updated successfully.");
         return "redirect:/spare-parts";
     }
 }

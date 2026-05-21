@@ -26,90 +26,175 @@
 <body>
 
 <!-- ===== NAVBAR FRAGMENT ===== -->
-<nav th:fragment="navbar" class="bg-slate-900 text-white sticky top-0 z-50 shadow-2xl">
+<nav th:fragment="navbar" id="mainNav" class="bg-slate-900 text-white sticky top-0 z-50" style="transition:background 0.4s ease,box-shadow 0.4s ease;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
+
             <!-- Logo -->
-            <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 tracking-tight">
+            <a href="/" class="text-2xl font-black tracking-tight flex-shrink-0" style="background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
                 AutoMart
             </a>
 
             <!-- Desktop Nav Links -->
             <div class="hidden md:flex items-center space-x-1">
-                <a href="/" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition">Home</a>
-                <a href="/vehicles" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition">Inventory</a>
-                <a href="/spare-parts" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition">Spare Parts</a>
-                <a href="/sell" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition">Sell Car</a>
-                <a href="/about" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition">About</a>
-                <a href="/contact" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition">Contact</a>
+                <a href="/" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:text-blue-400">Home</a>
+                <a href="/vehicles" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:text-blue-400">Inventory</a>
+                <a href="/spare-parts" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:text-blue-400">Spare Parts</a>
+                <a href="/sell" th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:text-blue-400">Sell Car</a>
+                <a href="/about" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:text-blue-400">About</a>
+                <a href="/contact" class="hover:bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:text-blue-400">Contact</a>
             </div>
 
-            <!-- Auth Buttons -->
+            <!-- Desktop Auth -->
             <div class="hidden md:flex items-center space-x-3">
-                <!-- Guest -->
                 <div th:if="${session.loggedInUser == null}">
                     <a href="/login" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition">Login</a>
                     <a href="/register" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-semibold transition shadow-lg">Register</a>
                 </div>
-                <!-- Logged In -->
                 <div th:if="${session.loggedInUser != null}" class="flex items-center space-x-3">
-                    <a href="/bookings" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition">My Bookings</a>
+                    <a href="/profile#bookings"
+                       th:if="${session.loggedInUser.role != 'ADMIN'}"
+                       class="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition hidden lg:inline">Bookings</a>
                     <a href="/profile" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition">
-                        <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs font-bold"
+                        <div th:if="${session.loggedInUser.profileImage != null and !session.loggedInUser.profileImage.isEmpty()}"
+                             class="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                            <img th:src="${session.loggedInUser.profileImage}" class="w-full h-full object-cover" alt="Avatar">
+                        </div>
+                        <div th:unless="${session.loggedInUser.profileImage != null and !session.loggedInUser.profileImage.isEmpty()}"
+                             class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                              th:text="${#strings.substring(session.loggedInUser.name, 0, 1).toUpperCase()}"></div>
                         <span th:text="${session.loggedInUser.name}"></span>
+                        <span th:if="${session.loggedInUser.banned}" class="text-red-400 text-xs">[Banned]</span>
                     </a>
                     <a th:if="${session.loggedInUser.role == 'ADMIN'}" href="/admin" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-sm font-semibold transition">Admin</a>
                     <a href="/logout" class="text-gray-400 hover:text-white text-sm transition">Logout</a>
                 </div>
+            </div>
+
+            <!-- Mobile hamburger -->
+            <button id="mobileMenuBtn" class="md:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-slate-800 transition" aria-label="Toggle menu">
+                <svg id="menuIconOpen" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg id="menuIconClose" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Mobile menu drawer -->
+    <div id="mobileMenu" class="md:hidden" style="border-top:1px solid rgba(255,255,255,0.07);">
+        <div class="px-4 py-3 space-y-1">
+            <a href="/" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 hover:text-blue-400 transition">Home</a>
+            <a href="/vehicles" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 hover:text-blue-400 transition">Inventory</a>
+            <a href="/spare-parts" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 hover:text-blue-400 transition">Spare Parts</a>
+            <a href="/sell" th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 hover:text-blue-400 transition">Sell Car</a>
+            <a href="/about" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 hover:text-blue-400 transition">About</a>
+            <a href="/contact" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 hover:text-blue-400 transition">Contact</a>
+            <div th:if="${session.loggedInUser != null}" style="border-top:1px solid rgba(255,255,255,0.07);padding-top:10px;margin-top:8px;">
+                <a href="/profile" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 transition"
+                   th:text="'Profile — ' + ${session.loggedInUser.name}"></a>
+                <a th:if="${session.loggedInUser.role != 'ADMIN'}" href="/profile#bookings" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-200 hover:bg-slate-800 transition">My Bookings</a>
+                <a th:if="${session.loggedInUser.role == 'ADMIN'}" href="/admin" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-red-400 hover:bg-slate-800 transition">Admin Dashboard</a>
+                <a href="/logout" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-400 hover:bg-slate-800 transition">Logout</a>
+            </div>
+            <div th:if="${session.loggedInUser == null}" style="border-top:1px solid rgba(255,255,255,0.07);padding-top:10px;margin-top:8px;display:flex;gap:8px;">
+                <a href="/login" class="flex-1 text-center px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-200 bg-slate-800 hover:bg-slate-700 transition">Login</a>
+                <a href="/register" class="flex-1 text-center px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition">Register</a>
             </div>
         </div>
     </div>
 </nav>
 
 <!-- ===== FOOTER FRAGMENT ===== -->
-<footer th:fragment="footer" class="bg-slate-900 text-gray-300 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <!-- Brand -->
-            <div class="md:col-span-1">
-                <h3 class="text-2xl font-black text-white mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">AutoMart</h3>
-                <p class="text-sm text-gray-400 leading-relaxed">Sri Lanka's trusted destination for premium second-hand vehicles. Quality, transparency, and value guaranteed.</p>
+<footer th:fragment="footer" class="am-footer text-gray-400 mt-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style="padding-top:72px;padding-bottom:0;">
+
+        <!-- Top grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12" style="border-bottom:1px solid rgba(255,255,255,0.07);">
+
+            <!-- Brand + Newsletter -->
+            <div class="lg:col-span-2">
+                <a href="/" class="inline-block text-2xl font-black tracking-tight mb-4" style="background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">AutoMart</a>
+                <p class="text-sm leading-relaxed mb-5" style="color:rgba(255,255,255,0.40);max-width:280px;">Sri Lanka's trusted destination for premium second-hand vehicles. Quality, transparency, and value guaranteed.</p>
+
+                <!-- Social icons -->
+                <div class="flex gap-2 mb-6">
+                    <a href="#" class="footer-social-btn" title="Facebook">f</a>
+                    <a href="#" class="footer-social-btn" title="Instagram"
+                       style="font-size:0.75rem;font-style:italic;">in</a>
+                    <a href="#" class="footer-social-btn" title="Twitter / X">&#120143;</a>
+                    <a href="#" class="footer-social-btn" title="WhatsApp"
+                       style="font-size:0.78rem;">&#128241;</a>
+                </div>
+
+                <!-- Newsletter -->
+                <div>
+                    <p class="text-xs font-700 text-white uppercase tracking-widest mb-2" style="font-weight:700;letter-spacing:0.1em;">Stay Updated</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email address" class="footer-newsletter-input">
+                        <button class="footer-newsletter-btn">Subscribe</button>
+                    </div>
+                </div>
             </div>
+
             <!-- Browse -->
             <div>
-                <h4 class="text-sm font-bold text-white uppercase tracking-widest mb-4">Browse</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="/vehicles" class="hover:text-white transition">All Vehicles</a></li>
-                    <li><a href="/spare-parts" class="hover:text-white transition">Spare Parts</a></li>
-                    <li><a href="/sell" class="hover:text-white transition">Sell Your Car</a></li>
-                    <li><a href="/bookings/new" class="hover:text-white transition">Book Test Drive</a></li>
-                </ul>
+                <h4 class="text-xs font-bold text-white uppercase tracking-widest mb-5" style="letter-spacing:0.12em;">Browse</h4>
+                <div class="space-y-2">
+                    <a href="/vehicles" class="footer-link">All Vehicles</a>
+                    <a href="/spare-parts" class="footer-link">Spare Parts</a>
+                    <a href="/sell" class="footer-link">Sell Your Car</a>
+                    <a href="/bookings/new" class="footer-link">Book Test Drive</a>
+                </div>
             </div>
+
             <!-- Company -->
             <div>
-                <h4 class="text-sm font-bold text-white uppercase tracking-widest mb-4">Company</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="/about" class="hover:text-white transition">About Us</a></li>
-                    <li><a href="/contact" class="hover:text-white transition">Contact</a></li>
-                    <li><a href="/login" class="hover:text-white transition">Login</a></li>
-                    <li><a href="/register" class="hover:text-white transition">Register</a></li>
-                </ul>
+                <h4 class="text-xs font-bold text-white uppercase tracking-widest mb-5" style="letter-spacing:0.12em;">Company</h4>
+                <div class="space-y-2">
+                    <a href="/about" class="footer-link">About Us</a>
+                    <a href="/contact" class="footer-link">Contact</a>
+                    <a href="/login" class="footer-link">Login</a>
+                    <a href="/register" class="footer-link">Register</a>
+                </div>
             </div>
+
             <!-- Contact -->
             <div>
-                <h4 class="text-sm font-bold text-white uppercase tracking-widest mb-4">Contact</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li class="flex items-start gap-2"><span>📍</span>123 Galle Road, Colombo 03</li>
-                    <li class="flex items-center gap-2"><span>📞</span>+94 11 234 5678</li>
-                    <li class="flex items-center gap-2"><span>✉️</span>support@automart.lk</li>
-                    <li class="flex items-center gap-2"><span>🕐</span>Mon–Sat, 8am–6pm</li>
-                </ul>
+                <h4 class="text-xs font-bold text-white uppercase tracking-widest mb-5" style="letter-spacing:0.12em;">Contact</h4>
+                <div class="space-y-3 text-sm" style="color:rgba(255,255,255,0.40);">
+                    <div class="flex items-start gap-2">
+                        <span style="flex-shrink:0;margin-top:1px;">📍</span>
+                        <span>123 Galle Road, Colombo 03</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span>📞</span>
+                        <a href="tel:+94112345678" style="color:rgba(255,255,255,0.40);text-decoration:none;">+94 11 234 5678</a>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span>✉️</span>
+                        <a href="mailto:support@automart.lk" style="color:rgba(255,255,255,0.40);text-decoration:none;">support@automart.lk</a>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span>🕐</span>
+                        <span>Mon–Sat, 8am–6pm</span>
+                    </div>
+                </div>
             </div>
+
         </div>
-        <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500">
+
+        <!-- Bottom bar -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3 py-5 text-xs" style="color:rgba(255,255,255,0.25);">
             <p>&copy; 2026 AutoMart (Pvt) Ltd. All rights reserved.</p>
-            <p class="mt-2 md:mt-0">Built with Spring Boot &amp; Tailwind CSS | MVC Architecture | OOP Design</p>
+            <div class="flex gap-4">
+                <span>Privacy Policy</span>
+                <span>Terms of Service</span>
+                <span>Built with Spring Boot &amp; Tailwind CSS</span>
+            </div>
         </div>
     </div>
 </footer>

@@ -18,6 +18,7 @@ public class SellRequest {
     private double expectedPrice;
     private String details;
     private String status; // PENDING, APPROVED, REJECTED
+    private String rejectionReason;
     private LocalDateTime requestDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -63,4 +64,7 @@ public class SellRequest {
 
     public Customer getSeller() { return seller; }
     public void setSeller(Customer seller) { this.seller = seller; }
+
+    public String getRejectionReason() { return rejectionReason; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
 }
