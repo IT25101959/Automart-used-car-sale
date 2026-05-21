@@ -1,0 +1,697 @@
+/* ==========================================================================
+   AutoMart Premium Admin Dashboard Stylesheet (Modern Light Slate Theme)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --bg-main: #f8fafc; /* Premium Light Slate */
+    --bg-card: #ffffff; /* Pure White Card */
+    --bg-card-hover: #f1f5f9;
+    --bg-input: #ffffff;
+    --border-color: #e2e8f0; /* Subtle light border */
+    --border-glow: rgba(59, 130, 246, 0.4);
+
+    --primary: #2563eb; /* High contrast Royal Blue */
+    --primary-glow: rgba(37, 99, 235, 0.08);
+    --secondary: #4f46e5;
+    --accent: #0284c7;
+    --success: #16a34a; /* High contrast Forest Green */
+    --warning: #ca8a04; /* High contrast Dark Amber */
+    --danger: #dc2626; /* High contrast Dark Red */
+    --info: #0284c7;
+
+    --text-primary: #0f172a; /* Slate 900 for absolute readability */
+    --text-secondary: #334155; /* Slate 700 for descriptions */
+    --text-muted: #64748b; /* Slate 500 for captions */
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+    --shadow-glow: 0 10px 25px rgba(37, 99, 235, 0.08);
+}
+
+/* Base Body Overrides */
+body.admin-body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+        radial-gradient(ellipse at 10% 20%, rgba(37, 99, 235, 0.04) 0%, transparent 45%),
+        radial-gradient(ellipse at 90% 80%, rgba(79, 70, 229, 0.03) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 50%, rgba(2, 132, 199, 0.02) 0%, transparent 50%);
+}
+
+/* Premium Light Scrollbars */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1; /* Grey slider */
+    border: 2px solid var(--bg-main);
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* Navbar Custom Styling (Premium High-contrast dark top bar) */
+.admin-navbar {
+    background: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.9rem 0;
+    transition: var(--transition);
+}
+.admin-brand {
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ef4444, #f43f5e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.admin-nav-link {
+    color: #94a3b8 !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+.admin-nav-link:hover, .admin-nav-link.active {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Glassmorphic Premium Cards */
+.admin-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-premium);
+    transition: var(--transition);
+    overflow: hidden;
+    position: relative;
+}
+.admin-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--border-glow);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04), var(--shadow-glow);
+}
+
+/* Stat Cards Gradients */
+.stat-card-gradient {
+    position: relative;
+    z-index: 1;
+}
+.stat-card-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    z-index: 2;
+}
+.stat-card-blue::before { background: linear-gradient(to bottom, var(--primary), var(--secondary)); }
+.stat-card-green::before { background: linear-gradient(to bottom, var(--success), var(--accent)); }
+.stat-card-amber::before { background: linear-gradient(to bottom, var(--warning), #fb923c); }
+.stat-card-purple::before { background: linear-gradient(to bottom, #a855f7, #ec4899); }
+.stat-card-orange::before { background: linear-gradient(to bottom, #f97316, #e11d48); }
+.stat-card-teal::before { background: linear-gradient(to bottom, #14b8a6, #0ea5e9); }
+
+.stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: #f1f5f9;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+.admin-card:hover .stat-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.2);
+    color: var(--primary) !important;
+}
+
+/* Card Image Wrapper with overlay dynamic transitions */
+.car-card-img-wrapper {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+}
+.car-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+.admin-card:hover .car-card-img {
+    transform: scale(1.08);
+}
+.car-card-img-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(transparent, var(--bg-card));
+}
+
+/* Avatar Badge Styles */
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Dynamic High-Contrast Light Glass Badges */
+.glass-badge {
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border: 1px solid transparent;
+}
+.glass-badge-pending {
+    background: rgba(202, 138, 4, 0.1);
+    color: #854d0e;
+    border-color: rgba(202, 138, 4, 0.2);
+}
+.glass-badge-approved {
+    background: rgba(22, 163, 74, 0.08);
+    color: #166534;
+    border-color: rgba(22, 163, 74, 0.2);
+}
+.glass-badge-rejected {
+    background: rgba(220, 38, 38, 0.08);
+    color: #991b1b;
+    border-color: rgba(220, 38, 38, 0.2);
+}
+.glass-badge-role-admin {
+    background: rgba(220, 38, 38, 0.1);
+    color: #991b1b;
+    border-color: rgba(220, 38, 38, 0.2);
+}
+.glass-badge-role-customer {
+    background: rgba(37, 99, 235, 0.08);
+    color: #1e40af;
+    border-color: rgba(37, 99, 235, 0.2);
+}
+
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 1.25rem 0;
+}
+
+/* Standard Spec Badges inside vehicle info */
+.spec-pill {
+    background: #f1f5f9;
+    border: 1px solid var(--border-color);
+    padding: 0.35rem 0.7rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+/* Custom Light slate details box */
+.admin-details-box {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+/* Modals Restyling (Clean Light Modern Modal) */
+.admin-modal-content {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    color: var(--text-primary);
+}
+.admin-modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
+}
+.admin-modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+.admin-modal-close-btn {
+    filter: none;
+}
+
+/* Section Header Styles */
+.admin-section-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.admin-section-title {
+    font-weight: 800;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+}
+.admin-section-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Star ratings modern layout */
+.stars-display {
+    color: #eab308;
+    font-size: 0.95rem;
+    display: inline-flex;
+    gap: 2px;
+}
+
+/* Hover scales for quick list buttons */
+.admin-btn {
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 0.45rem 1rem;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+.admin-btn-primary {
+    background: var(--primary);
+    color: white;
+}
+.admin-btn-primary:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.admin-btn-outline {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+.admin-btn-outline:hover {
+    background: #f1f5f9;
+    color: var(--text-primary);
+}
+.admin-btn-success {
+    background: rgba(22, 163, 74, 0.08);
+    color: #15803d;
+    border-color: rgba(22, 163, 74, 0.2);
+}
+.admin-btn-success:hover {
+    background: var(--success);
+    color: white;
+}
+.admin-btn-danger {
+    background: rgba(220, 38, 38, 0.08);
+    color: #b91c1c;
+    border-color: rgba(220, 38, 38, 0.2);
+}
+.admin-btn-danger:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Stat Grid layout card specs */
+.stat-value {
+    font-size: 2.1rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+}
+.stat-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+/* Simple animation keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.delay-50 { animation-delay: 50ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-250 { animation-delay: 250ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-325 { animation-delay: 325ms; }
+.delay-350 { animation-delay: 350ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* Admin table for orders section */
+.admin-table {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-color);
+}
+.admin-table thead tr {
+    background: #f1f5f9;
+}
+.admin-table thead th {
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 12px;
+}
+.admin-table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+.admin-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* ==========================================================================
+   Management Hub Cards
+   ========================================================================== */
+
+.admin-welcome-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+
+.mgmt-card {
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: transform 0.28s cubic-bezier(.34,1.56,.64,1), box-shadow 0.28s ease;
+    overflow: hidden;
+    cursor: pointer;
+}
+.mgmt-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.40);
+}
+
+.mgmt-card-inner {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 200px;
+}
+
+.mgmt-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.4rem;
+}
+
+.mgmt-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.mgmt-badge {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.08);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    white-space: nowrap;
+}
+
+.mgmt-stat {
+    flex-grow: 1;
+    margin-bottom: 1.4rem;
+}
+
+.mgmt-count {
+    display: block;
+    font-size: 2.75rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+    font-family: 'Outfit', sans-serif;
+}
+.mgmt-count-sm {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.75);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+    font-family: 'Outfit', sans-serif;
+}
+
+.mgmt-sublabel {
+    display: block;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.40);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.mgmt-card-footer {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 1rem;
+}
+
+.mgmt-link-btn {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.14);
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    text-decoration: none !important;
+    transition: background 0.2s ease, transform 0.15s ease;
+    white-space: nowrap;
+}
+.mgmt-link-btn:hover {
+    background: rgba(255,255,255,0.24);
+    transform: translateY(-1px);
+}
+
+.mgmt-link-outline {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45) !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+.mgmt-link-outline:hover {
+    color: rgba(255,255,255,0.85) !important;
+}
+
+/* ==========================================================================
+   Admin Category Navigation Cards (new dashboard)
+   ========================================================================== */
+
+.admin-category-card {
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: transform 0.32s cubic-bezier(.34,1.56,.64,1), box-shadow 0.32s ease;
+    display: flex;
+    flex-direction: column;
+}
+.admin-category-card:hover {
+    transform: translateY(-10px) scale(1.015);
+    box-shadow: 0 30px 64px rgba(0,0,0,0.48);
+}
+.admin-cat-inner {
+    padding: 30px 26px 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 310px;
+    height: 100%;
+}
+.admin-cat-icon {
+    width: 66px;
+    height: 66px;
+    border-radius: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.9rem;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+    margin-bottom: 20px;
+    flex-shrink: 0;
+    transition: transform 0.32s cubic-bezier(.34,1.56,.64,1);
+}
+.admin-category-card:hover .admin-cat-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+.admin-cat-label {
+    font-size: 0.60rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.38);
+    margin-bottom: 5px;
+    display: block;
+}
+.admin-cat-title {
+    font-size: 1.22rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 9px;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+}
+.admin-cat-desc {
+    font-size: 0.79rem;
+    color: rgba(255,255,255,0.43);
+    line-height: 1.7;
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+.admin-cat-stats { margin-bottom: 20px; }
+.admin-cat-num {
+    display: block;
+    font-size: 2.55rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Outfit', sans-serif;
+}
+.admin-cat-num-sm {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.68);
+    font-family: 'Outfit', sans-serif;
+}
+.admin-cat-stat-lbl {
+    font-size: 0.63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.32);
+    margin-top: 4px;
+    display: block;
+}
+.admin-cat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgba(255,255,255,0.11);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 11px;
+    padding: 10px 18px;
+    transition: background 0.2s ease;
+    margin-top: auto;
+    width: fit-content;
+}
+.admin-category-card:hover .admin-cat-btn {
+    background: rgba(255,255,255,0.22);
+}
+
+/* ==========================================================================
+   Admin Sub-page Header
+   ========================================================================== */
+
+.admin-sub-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 16px;
+    padding: 22px 28px;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    margin-bottom: 32px;
+}
+.admin-breadcrumb-link {
+    color: rgba(255,255,255,0.38);
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s ease;
+    margin-bottom: 8px;
+}
+.admin-breadcrumb-link:hover { color: rgba(255,255,255,0.80); }
+.admin-sub-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.015em;
+}
+.admin-sub-subtitle {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.38);
+    margin-top: 4px;
+    margin-bottom: 0;
+}

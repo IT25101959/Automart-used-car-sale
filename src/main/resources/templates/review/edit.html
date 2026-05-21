@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Review')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<main class="container" style="max-width:600px">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <div class="page-header"><h1>Edit Review</h1></div>
+
+    <div class="card p-4">
+        <form th:action="@{/reviews/{id}/edit(id=${review.id})}" method="post">
+            <div class="mb-4 text-center">
+                <label class="form-label">Rating</label>
+                <div class="star-input justify-content-center">
+                    <input type="hidden" name="rating" th:value="${review.rating}" />
+                    <label th:each="i : ${#numbers.sequence(1,5)}" th:data-value="${i}"
+                           th:classappend="${i <= review.rating ? 'active' : ''}"
+                           th:text="${i <= review.rating ? '★' : '☆'}">★</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Your Review</label>
+                <textarea name="comment" class="form-control" rows="4" th:text="${review.comment}" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Review</button>
+            <a th:href="@{/reviews/seller/{id}(id=${review.sellerId})}" class="btn btn-outline-light ms-2">Cancel</a>
+        </form>
+    </div>
+</main>
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

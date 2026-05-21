@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My Profile')}"></head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow">
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="mb-5 bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-xl flex items-center gap-2 animate-fade-in">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="mb-5 bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-xl flex items-center gap-2">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <span th:text="${error}"></span>
+    </div>
+    <div th:if="${pwError}" class="mb-5 bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-xl flex items-center gap-2">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <span th:text="${pwError}"></span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- ── LEFT SIDEBAR ── -->
+        <div class="lg:col-span-1 space-y-4">
+
+            <!-- Profile Card -->
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div class="bg-gradient-to-br from-slate-800 to-blue-900 px-6 pt-8 pb-6 flex flex-col items-center text-center">
+                    <!-- Avatar -->
+                    <div class="relative mb-3">
+                        <div th:if="${user.profileImage != null and !user.profileImage.isEmpty()}"
+                             class="w-24 h-24 rounded-full overflow-hidden ring-4 ring-white/30 shadow-xl">
+                            <img th:src="${user.profileImage}" class="w-full h-full object-cover" alt="Profile">
+                        </div>
+                        <div th:unless="${user.profileImage != null and !user.profileImage.isEmpty()}"
+                             class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-4xl font-extrabold ring-4 ring-white/30 shadow-xl"
+                             th:text="${#strings.substring(user.name,0,1).toUpperCase()}"></div>
+                        <label for="avatarUpload" class="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </label>
+                    </div>
+                    <!-- Hidden upload form -->
+                    <form action="/profile/upload-image" method="POST" enctype="multipart/form-data" id="avatarForm">
+                        <input type="file" id="avatarUpload" name="imageFile" accept="image/*" class="hidden" onchange="document.getElementById('avatarForm').submit()">
+                    </form>
+
+                    <h2 class="text-xl font-bold text-white mt-1" th:text="${user.name}"></h2>
+                    <p class="text-blue-300 text-sm" th:text="${user.email}"></p>
+                    <span class="mt-2 inline-block px-3 py-0.5 rounded-full text-xs font-bold"
+                          th:classappend="${user.role == 'ADMIN'} ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'"
+                          th:text="${user.role}"></span>
+                </div>
+                <div class="px-5 py-4 text-sm text-gray-600 space-y-2 bg-slate-50">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        <span th:text="${user.phone ?: 'Not set'}"></span>
+                    </div>
+                    <div th:if="${user.role == 'CUSTOMER'}" class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span th:text="${user.address ?: 'Not set'}"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd MMM yyyy') : 'N/A'}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Summary Cards -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-2xl font-bold text-blue-600" th:text="${#lists.size(purchases)}">0</p>
+                    <p class="text-xs text-gray-500 mt-1">Orders</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-2xl font-bold text-indigo-600" th:text="${#lists.size(bookings)}">0</p>
+                    <p class="text-xs text-gray-500 mt-1">Bookings</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-2xl font-bold text-amber-600" th:text="${#lists.size(sellRequests)}">0</p>
+                    <p class="text-xs text-gray-500 mt-1">Sell Req.</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-2xl font-bold text-green-600" th:text="${#lists.size(reviews)}">0</p>
+                    <p class="text-xs text-gray-500 mt-1">Reviews</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-2xl shadow-sm p-4 space-y-2">
+                <a href="/vehicles" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 text-sm text-gray-700 transition">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    Browse Inventory
+                </a>
+                <a href="/spare-parts" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 text-sm text-gray-700 transition">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Spare Parts
+                </a>
+                <a href="/sell" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 text-sm text-gray-700 transition">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    Sell a Car
+                </a>
+                <a th:if="${user.role == 'ADMIN'}" href="/admin" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-sm text-red-700 font-semibold transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+                    Admin Panel
+                </a>
+                <a href="/logout" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 text-sm text-red-600 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- ── RIGHT CONTENT TABS ── -->
+        <div class="lg:col-span-3">
+
+            <!-- Tab Navigation -->
+            <div class="bg-white rounded-2xl shadow-sm mb-5 overflow-x-auto">
+                <div class="flex border-b border-gray-100 min-w-max">
+                    <button onclick="showTab('overview')" id="tab-overview"
+                            class="tab-btn active px-5 py-4 text-sm font-semibold text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
+                        Overview
+                    </button>
+                    <button onclick="showTab('purchases')" id="tab-purchases"
+                            class="tab-btn px-5 py-4 text-sm font-medium text-gray-500 hover:text-gray-800 border-b-2 border-transparent whitespace-nowrap transition">
+                        Orders
+                        <span class="ml-1 bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full" th:text="${#lists.size(purchases)}"></span>
+                    </button>
+                    <button onclick="showTab('bookings')" id="tab-bookings"
+                            class="tab-btn px-5 py-4 text-sm font-medium text-gray-500 hover:text-gray-800 border-b-2 border-transparent whitespace-nowrap transition">
+                        Bookings
+                        <span class="ml-1 bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full" th:text="${#lists.size(bookings)}"></span>
+                    </button>
+                    <button onclick="showTab('sellrequests')" id="tab-sellrequests"
+                            class="tab-btn px-5 py-4 text-sm font-medium text-gray-500 hover:text-gray-800 border-b-2 border-transparent whitespace-nowrap transition">
+                        Sell Requests
+                        <span class="ml-1 bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full" th:text="${#lists.size(sellRequests)}"></span>
+                    </button>
+                    <button onclick="showTab('reviews')" id="tab-reviews"
+                            class="tab-btn px-5 py-4 text-sm font-medium text-gray-500 hover:text-gray-800 border-b-2 border-transparent whitespace-nowrap transition">
+                        Reviews
+                    </button>
+                    <button onclick="showTab('messages')" id="tab-messages"
+                            class="tab-btn px-5 py-4 text-sm font-medium text-gray-500 hover:text-gray-800 border-b-2 border-transparent whitespace-nowrap transition">
+                        Messages
+                        <span class="ml-1 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full" th:text="${#lists.size(messages)}"></span>
+                    </button>
+                    <button onclick="showTab('settings')" id="tab-settings"
+                            class="tab-btn px-5 py-4 text-sm font-medium text-gray-500 hover:text-gray-800 border-b-2 border-transparent whitespace-nowrap transition">
+                        Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── TAB: OVERVIEW ── -->
+            <div id="pane-overview" class="tab-pane">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Edit Profile Information</h3>
+                    <form action="/profile/update" method="POST" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                <input type="text" name="name" th:value="${user.name}" required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                                <input type="email" th:value="${user.email}" disabled
+                                       class="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-gray-400 cursor-not-allowed text-sm">
+                                <p class="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                                <input type="text" name="phone" th:value="${user.phone}" placeholder="e.g. 0771234567"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            </div>
+                            <div th:if="${user.role == 'CUSTOMER'}">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+                                <input type="text" name="address" th:value="${user.address}" placeholder="Your address"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            </div>
+                        </div>
+                        <div class="flex gap-3 pt-2">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition text-sm">Save Changes</button>
+                            <a href="/" class="border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium px-6 py-3 rounded-xl transition text-sm">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ── TAB: PURCHASES ── -->
+            <div id="pane-purchases" class="tab-pane hidden">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-5">My Spare Part Orders</h3>
+                    <div th:if="${#lists.isEmpty(purchases)}" class="text-center py-10 text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <p class="text-sm">No orders yet. <a href="/spare-parts" class="text-blue-600 hover:underline">Shop spare parts</a></p>
+                    </div>
+                    <div class="space-y-4" th:unless="${#lists.isEmpty(purchases)}">
+                        <div th:each="p : ${purchases}"
+                             class="border border-gray-100 rounded-xl p-4 hover:shadow-md transition">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex gap-4 flex-1">
+                                    <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                        <img th:src="${p.product.imageUrl}" class="w-full h-full object-cover" th:alt="${p.product.name}" onerror="this.src='https://via.placeholder.com/64'">
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-slate-800 text-sm" th:text="${p.product.name}"></p>
+                                        <p class="text-gray-500 text-xs mt-0.5">Qty: <span th:text="${p.quantity}"></span> &bull; <span th:text="${p.paymentMethod}"></span></p>
+                                        <p class="text-blue-600 font-bold text-sm mt-1">LKR <span th:text="${#numbers.formatDecimal(p.totalCost,0,'COMMA',2,'POINT')}"></span></p>
+                                        <p class="text-xs text-gray-400 mt-0.5" th:text="${p.purchaseDate != null ? #temporals.format(p.purchaseDate,'dd MMM yyyy, HH:mm') : ''}"></p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold"
+                                          th:classappend="${p.status == 'DELIVERED'} ? 'bg-green-100 text-green-700' :
+                                                          (${p.status == 'REJECTED'} ? 'bg-red-100 text-red-700' :
+                                                          (${p.status == 'SHIPPED'} ? 'bg-blue-100 text-blue-700' :
+                                                          (${p.status == 'ACCEPTED'} ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700')))"
+                                          th:text="${p.status}"></span>
+                                    <p th:if="${p.rejectionReason != null}" class="text-xs text-red-500 max-w-32 text-right"
+                                       th:text="'Reason: ' + ${p.rejectionReason}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TAB: BOOKINGS ── -->
+            <div id="pane-bookings" class="tab-pane hidden">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-5">My Vehicle Bookings</h3>
+                    <div th:if="${#lists.isEmpty(bookings)}" class="text-center py-10 text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <p class="text-sm">No bookings yet. <a href="/bookings/new" class="text-blue-600 hover:underline">Book a test drive</a></p>
+                    </div>
+                    <div class="space-y-4" th:unless="${#lists.isEmpty(bookings)}">
+                        <div th:each="b : ${bookings}"
+                             class="border border-gray-100 rounded-xl p-4 hover:shadow-md transition flex items-start justify-between gap-4">
+                            <div class="flex gap-4">
+                                <div class="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                    <img th:src="${b.vehicle.imageUrl}" class="w-full h-full object-cover" th:alt="${b.vehicle.brand}" onerror="this.src='https://via.placeholder.com/56'">
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-slate-800 text-sm" th:text="${b.vehicle.brand + ' ' + b.vehicle.model + ' (' + b.vehicle.year + ')'}"></p>
+                                    <p class="text-gray-500 text-xs mt-0.5" th:text="${b.bookingDate != null ? #temporals.format(b.bookingDate,'dd MMM yyyy, HH:mm') : ''}"></p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold"
+                                      th:classappend="${b.status == 'CONFIRMED'} ? 'bg-green-100 text-green-700' :
+                                                      (${b.status == 'CANCELLED'} ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700')"
+                                      th:text="${b.status}"></span>
+                                <a th:if="${b.status != 'CANCELLED'}"
+                                   th:href="@{/bookings/{id}/cancel(id=${b.id})}"
+                                   onclick="return confirm('Cancel this booking?')"
+                                   class="text-xs text-red-500 hover:underline">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TAB: SELL REQUESTS ── -->
+            <div id="pane-sellrequests" class="tab-pane hidden">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-bold text-slate-800">My Sell Requests</h3>
+                        <a href="/sell" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition">+ New Request</a>
+                    </div>
+                    <div th:if="${#lists.isEmpty(sellRequests)}" class="text-center py-10 text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <p class="text-sm">No sell requests yet.</p>
+                    </div>
+                    <div class="space-y-4" th:unless="${#lists.isEmpty(sellRequests)}">
+                        <div th:each="sr : ${sellRequests}"
+                             class="border border-gray-100 rounded-xl p-4 hover:shadow-md transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-semibold text-slate-800" th:text="${sr.brand + ' ' + sr.model + ' (' + sr.year + ')'}"></p>
+                                    <p class="text-sm text-gray-500 mt-0.5">Expected: LKR <span th:text="${#numbers.formatDecimal(sr.expectedPrice,0,'COMMA',0,'POINT')}"></span></p>
+                                    <p class="text-xs text-gray-400 mt-1" th:text="${sr.requestDate != null ? #temporals.format(sr.requestDate,'dd MMM yyyy') : ''}"></p>
+                                    <p th:if="${sr.details != null}" class="text-xs text-gray-500 mt-1 italic" th:text="${sr.details}"></p>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold"
+                                          th:classappend="${sr.status == 'APPROVED'} ? 'bg-green-100 text-green-700' :
+                                                          (${sr.status == 'REJECTED'} ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700')"
+                                          th:text="${sr.status}"></span>
+                                    <p th:if="${sr.rejectionReason != null}" class="text-xs text-red-500 max-w-36 text-right"
+                                       th:text="'Reason: ' + ${sr.rejectionReason}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TAB: REVIEWS ── -->
+            <div id="pane-reviews" class="tab-pane hidden">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-5">My Reviews &amp; Ratings</h3>
+                    <div th:if="${#lists.isEmpty(reviews)}" class="text-center py-10 text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                        <p class="text-sm">No reviews posted yet.</p>
+                    </div>
+                    <div class="space-y-4" th:unless="${#lists.isEmpty(reviews)}">
+                        <div th:each="rv : ${reviews}" class="border border-gray-100 rounded-xl p-4 hover:shadow-md transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-semibold text-sm text-slate-800" th:text="${rv.vehicle != null ? rv.vehicle.brand + ' ' + rv.vehicle.model : 'Vehicle'}"></p>
+                                    <div class="flex gap-0.5 my-1">
+                                        <span th:each="i : ${#numbers.sequence(1,5)}"
+                                              th:text="${i <= rv.rating ? '★' : '☆'}"
+                                              th:classappend="${i <= rv.rating} ? 'text-yellow-400' : 'text-gray-300'"
+                                              class="text-lg leading-none"></span>
+                                    </div>
+                                    <p class="text-sm text-gray-600" th:text="${rv.content}"></p>
+                                    <p class="text-xs text-gray-400 mt-1" th:text="${rv.createdAt != null ? #temporals.format(rv.createdAt,'dd MMM yyyy') : ''}"></p>
+                                </div>
+                                <span class="bg-yellow-50 text-yellow-700 text-xs font-bold px-2 py-1 rounded-lg" th:text="${rv.rating} + '/5'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TAB: MESSAGES ── -->
+            <div id="pane-messages" class="tab-pane hidden">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-bold text-slate-800">Support Messages</h3>
+                        <a href="/contact" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition">+ New Message</a>
+                    </div>
+                    <div th:if="${#lists.isEmpty(messages)}" class="text-center py-10 text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                        <p class="text-sm">No messages sent yet. <a href="/contact" class="text-blue-600 hover:underline">Contact support</a></p>
+                    </div>
+                    <div class="space-y-4" th:unless="${#lists.isEmpty(messages)}">
+                        <div th:each="msg : ${messages}"
+                             class="border rounded-xl p-4 transition"
+                             th:classappend="${msg.status == 'RESOLVED'} ? 'border-green-200 bg-green-50/30' : 'border-gray-100 hover:shadow-md'">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="font-semibold text-sm text-slate-800" th:text="${msg.subject}"></p>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold"
+                                      th:classappend="${msg.status == 'RESOLVED'} ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+                                      th:text="${msg.status}"></span>
+                            </div>
+                            <p class="text-sm text-gray-600" th:text="${msg.message}"></p>
+                            <p class="text-xs text-gray-400 mt-1" th:text="${msg.sentAt != null ? #temporals.format(msg.sentAt,'dd MMM yyyy, HH:mm') : ''}"></p>
+                            <div th:if="${msg.adminReply != null}" class="mt-3 bg-blue-50 border border-blue-100 rounded-lg p-3">
+                                <p class="text-xs font-bold text-blue-700 mb-1">Admin Reply:</p>
+                                <p class="text-sm text-blue-800" th:text="${msg.adminReply}"></p>
+                                <p class="text-xs text-blue-400 mt-1" th:text="${msg.repliedAt != null ? #temporals.format(msg.repliedAt,'dd MMM yyyy, HH:mm') : ''}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TAB: SETTINGS ── -->
+            <div id="pane-settings" class="tab-pane hidden">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Change Password</h3>
+                    <form action="/profile/change-password" method="POST" class="space-y-4 max-w-md">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
+                            <input type="password" name="currentPassword" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
+                            <input type="password" name="newPassword" required minlength="6"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
+                            <input type="password" name="confirmPassword" required minlength="6"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                        </div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition text-sm">
+                            Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<style>
+    .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.3s ease; }
+    .tab-pane:not(.hidden) { animation: fadeIn 0.25s ease; }
+</style>
+
+<script>
+    function showTab(name) {
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('active', 'text-blue-600', 'border-blue-600');
+            b.classList.add('text-gray-500', 'border-transparent');
+        });
+        document.getElementById('pane-' + name).classList.remove('hidden');
+        const btn = document.getElementById('tab-' + name);
+        btn.classList.add('active', 'text-blue-600', 'border-blue-600');
+        btn.classList.remove('text-gray-500', 'border-transparent');
+    }
+    // Auto-open tab from URL hash or flash message
+    window.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash.replace('#','');
+        const valid = ['overview','purchases','bookings','sellrequests','reviews','messages','settings'];
+        if (valid.includes(hash)) showTab(hash);
+    });
+</script>
+</body>
+</html>

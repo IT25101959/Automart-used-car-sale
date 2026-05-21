@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Order Confirmed - AutoMart')}"></head>
+<body class="bg-slate-50 min-h-screen flex flex-col font-sans">
+
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow flex items-center justify-center">
+    
+    <div class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-100 text-center w-full relative overflow-hidden">
+        <div class="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+        
+        <!-- Animated Success Checkmark -->
+        <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-100 shadow-inner">
+            <svg class="w-10 h-10 text-emerald-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        
+        <h2 class="text-3xl font-black text-slate-800 mb-2">Order Confirmed!</h2>
+        <p class="text-slate-500 text-sm mb-8">Thank you for your purchase. Your order has been placed and is currently being processed by our warehouse.</p>
+        
+        <!-- Order Summary Card -->
+        <div class="bg-slate-50 rounded-2xl p-6 text-left space-y-4 mb-8">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-200/60">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Order ID</span>
+                <span class="text-sm font-extrabold text-indigo-600" th:text="'#AM-' + ${purchase.id}">#AM-100</span>
+            </div>
+            
+            <div class="flex justify-between items-start py-1">
+                <span class="text-xs font-bold text-slate-500">Product Ordered</span>
+                <div class="text-right">
+                    <span class="text-sm font-extrabold text-slate-800" th:text="${purchase.product.name}">Engine Cylinder Block</span>
+                    <span class="block text-xs text-slate-400" th:text="${purchase.product.brand} + ' • ' + ${purchase.quantity} + ' Unit(s)'">Brand • 1 Unit</span>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center py-1">
+                <span class="text-xs font-bold text-slate-500">Customer Details</span>
+                <div class="text-right">
+                    <span class="text-sm font-extrabold text-slate-800" th:text="${purchase.customerName}">John Doe</span>
+                    <span class="block text-xs text-slate-400" th:text="${purchase.email}">john@example.com</span>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center py-1">
+                <span class="text-xs font-bold text-slate-500">Shipping Destination</span>
+                <div class="text-right">
+                    <span class="text-sm font-extrabold text-slate-800" th:text="${purchase.address}">123 Main Road</span>
+                    <span class="block text-xs text-slate-400" th:text="${purchase.city} + ', ' + ${purchase.postalCode}">Colombo, 00700</span>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center py-1">
+                <span class="text-xs font-bold text-slate-500">Payment Option</span>
+                <span class="text-sm font-extrabold text-slate-800" th:text="${purchase.paymentMethod}">Credit Card</span>
+            </div>
+            
+            <div class="flex justify-between items-center pt-3 border-t border-slate-200/60">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Transaction Value</span>
+                <span class="text-lg font-black text-indigo-600">
+                    LKR <span th:text="${#numbers.formatDecimal(purchase.totalCost, 0, 'COMMA', 0, 'POINT')}">15,000</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Estimated Delivery Block -->
+        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 text-left flex items-start gap-3 mb-8">
+            <svg class="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <div>
+                <h4 class="text-xs font-black text-indigo-800 uppercase tracking-wider">Estimated Delivery Schedule</h4>
+                <p class="text-xs text-indigo-600 mt-1 font-semibold">
+                    Expected Arrival: <span th:text="${#temporals.format(purchase.purchaseDate.plusDays(3), 'dd MMMM yyyy')}">Date</span> to 
+                    <span th:text="${#temporals.format(purchase.purchaseDate.plusDays(5), 'dd MMMM yyyy')}">Date</span>
+                </p>
+                <p class="text-[10px] text-indigo-400 mt-1">Our customer experience agents will contact you to verify dispatch schedules shortly.</p>
+            </div>
+        </div>
+
+        <!-- Redirect Actions -->
+        <div class="flex flex-col sm:flex-row gap-4">
+            <a href="/spare-parts" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-xs uppercase tracking-wider transition-all duration-200 active:scale-95">
+                Continue Shopping
+            </a>
+            <a href="/spare-parts/orders" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-2xl text-xs uppercase tracking-wider transition-all duration-200 active:scale-95 shadow-sm shadow-indigo-600/10">
+                Track My Orders
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

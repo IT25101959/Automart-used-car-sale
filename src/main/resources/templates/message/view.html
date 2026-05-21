@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('View Message')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<main class="container" style="max-width:700px">
+    <a th:href="@{/messages}" class="btn btn-outline-primary btn-sm mb-3">← Back to Inbox</a>
+
+    <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h4 style="color:var(--text-primary)" th:text="${message.subject}">Subject</h4>
+                <small style="color:var(--text-muted)">
+                    From: <strong th:text="${message.senderUsername}">Sender</strong> →
+                    To: <strong th:text="${message.receiverUsername}">Receiver</strong>
+                </small>
+            </div>
+            <small style="color:var(--text-muted)" th:text="${#temporals.format(message.createdAt, 'MMM dd, yyyy HH:mm')}">Date</small>
+        </div>
+
+        <div th:if="${message.vehicleTitle != null}" class="mb-3 p-2" style="background:var(--bg-surface);border-radius:var(--radius-sm)">
+            <small style="color:var(--text-muted)">Regarding: </small>
+            <a th:href="@{/vehicles/{id}(id=${message.vehicleId})}" style="color:var(--primary-light)" th:text="${message.vehicleTitle}">Vehicle</a>
+        </div>
+
+        <div class="divider"></div>
+        <div style="color:var(--text-secondary);line-height:1.7;white-space:pre-wrap" th:text="${message.content}">Message content</div>
+        <div class="divider"></div>
+
+        <div class="d-flex gap-2">
+            <a th:href="@{/messages/compose(to=${message.senderId})}" class="btn btn-primary btn-sm">↩️ Reply</a>
+            <form th:action="@{/messages/{id}/delete(id=${message.id})}" method="post" style="display:inline">
+                <button class="btn btn-danger btn-sm" data-confirm="Delete this message?">🗑️ Delete</button>
+            </form>
+        </div>
+    </div>
+</main>
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

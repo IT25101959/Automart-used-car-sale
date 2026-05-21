@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Compose Message')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<main class="container" style="max-width:650px">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <div class="page-header"><h1>✏️ Compose Message</h1></div>
+
+    <div class="card p-4">
+        <div th:if="${vehicle != null}" class="mb-3 p-3" style="background:var(--bg-surface);border-radius:var(--radius-md)">
+            <small style="color:var(--text-muted)">Regarding:</small>
+            <strong style="color:var(--primary-light)" th:text="${vehicle.title}">Vehicle</strong>
+        </div>
+
+        <form th:action="@{/messages/send}" method="post">
+            <input type="hidden" name="vehicleId" th:value="${vehicle != null ? vehicle.id : ''}" />
+            <div class="mb-3">
+                <label class="form-label">To (User ID)</label>
+                <input type="number" name="receiverId" class="form-control" th:value="${receiver != null ? receiver.id : ''}" placeholder="Enter recipient user ID" required />
+                <small th:if="${receiver != null}" style="color:var(--text-muted)" th:text="'Sending to: ' + ${receiver.username}">Username</small>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Subject</label>
+                <input type="text" name="subject" class="form-control"
+                       th:value="${vehicle != null ? 'Inquiry about ' + vehicle.title : ''}" placeholder="Message subject" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Message</label>
+                <textarea name="content" class="form-control" rows="5" placeholder="Write your message..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">📤 Send Message</button>
+            <a th:href="@{/messages}" class="btn btn-outline-light ms-2">Cancel</a>
+        </form>
+    </div>
+</main>
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="bg-white" style="font-family:'Inter',sans-serif;">
+
+<!-- Load home.css early to prevent FOUC -->
+<link rel="stylesheet" th:href="@{/css/home.css}">
+
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<!-- ═══════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════ -->
+<section class="hero-section" id="hero">
+    <div class="hero-bg-photo"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+
+                <!-- Left: copy & CTAs -->
+                <div class="flex-1 min-w-0">
+
+                    <div class="hero-badge">
+                        <span class="pulse-dot" style="width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block;flex-shrink:0;"></span>
+                        Sri Lanka&apos;s #1 Automotive Marketplace
+                    </div>
+
+                    <h1 class="hero-title">
+                        Find Your<br>
+                        <span class="accent">Perfect Ride.</span>
+                    </h1>
+
+                    <p class="hero-sub">
+                        Explore hundreds of premium used cars with verified history. Transparent pricing, trusted dealers, zero hassle.
+                    </p>
+
+                    <div class="flex flex-wrap gap-3 mb-8">
+                        <a href="/vehicles" class="btn-hero-primary">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+                            Browse Vehicles
+                        </a>
+                        <a href="/sell" th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}" class="btn-hero-outline">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Sell Your Vehicle
+                        </a>
+                    </div>
+
+                    <!-- Search bar -->
+                    <form action="/vehicles" method="get" class="hero-search-box">
+                        <svg width="15" height="15" fill="none" stroke="rgba(255,255,255,0.4)" viewBox="0 0 24 24" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+                        <input type="text" name="search" placeholder="Search brand, model, year...">
+                        <button type="submit" class="btn-hero-primary" style="padding:10px 20px;font-size:0.82rem;flex-shrink:0;">Search</button>
+                    </form>
+
+                    <!-- Stats row -->
+                    <div class="hero-stats">
+                        <div>
+                            <div class="hero-stat-num" data-count="250">0</div>
+                            <div class="hero-stat-label">Vehicles Listed</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-num" data-count="1200">0</div>
+                            <div class="hero-stat-label">Happy Customers</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-num" data-count="50">0</div>
+                            <div class="hero-stat-label">Trusted Dealers</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-num" data-count="99">0</div>
+                            <div class="hero-stat-label">% Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: floating glass cards -->
+                <div class="hidden lg:flex flex-col items-end gap-3" style="width:310px;flex-shrink:0;">
+                    <div class="glass-card w-full float-anim">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-xl" style="background:linear-gradient(135deg,#22c55e,#16a34a);">🚗</div>
+                            <div>
+                                <div style="font-size:0.68rem;color:rgba(255,255,255,0.45);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">New Listing</div>
+                                <div style="font-size:0.9rem;font-weight:800;color:#fff;">Toyota Corolla 2021</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span style="font-size:1.25rem;font-weight:900;color:#60a5fa;">LKR 5.4M</span>
+                            <span style="font-size:0.65rem;background:rgba(34,197,94,0.18);color:#86efac;border:1px solid rgba(34,197,94,0.28);padding:3px 9px;border-radius:6px;font-weight:800;">AVAILABLE</span>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <span style="font-size:0.68rem;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.55);padding:3px 9px;border-radius:7px;font-weight:600;">Petrol</span>
+                            <span style="font-size:0.68rem;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.55);padding:3px 9px;border-radius:7px;font-weight:600;">Automatic</span>
+                            <span style="font-size:0.68rem;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.55);padding:3px 9px;border-radius:7px;font-weight:600;">32,000 km</span>
+                        </div>
+                    </div>
+
+                    <div class="float-anim2" style="background:rgba(37,99,235,0.22);backdrop-filter:blur(16px);border:1px solid rgba(59,130,246,0.28);border-radius:14px;padding:14px 16px;width:75%;align-self:flex-end;">
+                        <div class="flex items-center gap-2">
+                            <span style="font-size:1.4rem;">✅</span>
+                            <div>
+                                <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);font-weight:700;text-transform:uppercase;">Verified</div>
+                                <div style="font-size:0.8rem;font-weight:800;color:#fff;">All vehicles inspected</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="float-anim" style="animation-delay:1.5s;background:rgba(245,158,11,0.14);backdrop-filter:blur(16px);border:1px solid rgba(245,158,11,0.25);border-radius:14px;padding:14px 16px;width:80%;">
+                        <div class="flex items-center gap-2">
+                            <span style="font-size:1.4rem;">⚡</span>
+                            <div>
+                                <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);font-weight:700;text-transform:uppercase;">Fast Deals</div>
+                                <div style="font-size:0.8rem;font-weight:800;color:#fff;">Sell within 48 hours</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="text-center pb-6" style="position:relative;z-index:10;">
+        <a href="#vehicles-section" style="color:rgba(255,255,255,0.28);display:inline-flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;font-size:0.65rem;letter-spacing:0.12em;font-weight:700;text-transform:uppercase;">
+            Scroll to explore
+            <svg class="scroll-indicator" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     BRAND MARQUEE STRIP
+═══════════════════════════════════════════ -->
+<div class="brands-strip">
+    <div class="brands-scroll-track">
+        <!-- Set 1 -->
+        <span class="brand-pill"><span class="brand-dot"></span>Toyota</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Honda</span>
+        <span class="brand-pill"><span class="brand-dot"></span>BMW</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Mercedes-Benz</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Nissan</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Suzuki</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Mitsubishi</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Ford</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Volkswagen</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Hyundai</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Audi</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Kia</span>
+        <!-- Set 2 (seamless duplicate) -->
+        <span class="brand-pill"><span class="brand-dot"></span>Toyota</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Honda</span>
+        <span class="brand-pill"><span class="brand-dot"></span>BMW</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Mercedes-Benz</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Nissan</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Suzuki</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Mitsubishi</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Ford</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Volkswagen</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Hyundai</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Audi</span>
+        <span class="brand-pill"><span class="brand-dot"></span>Kia</span>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FEATURED VEHICLES
+═══════════════════════════════════════════ -->
+<section class="am-section" id="vehicles-section" style="background:#ffffff;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Section header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-12 reveal">
+            <div>
+                <div class="section-label">Our Showroom</div>
+                <h2 class="section-title">Featured Vehicles</h2>
+                <div class="section-divider mt-3"></div>
+                <p class="section-sub mt-4">Handpicked premium vehicles with full service history and verified inspections</p>
+            </div>
+            <a href="/vehicles" class="btn-view-all flex-shrink-0">
+                View All
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(vehicles)}" class="text-center py-16 reveal">
+            <div style="font-size:3.5rem;margin-bottom:16px;">🚘</div>
+            <h4 style="color:#334155;font-weight:800;font-size:1.1rem;">No vehicles listed yet</h4>
+            <p style="color:#94a3b8;font-size:0.9rem;margin-top:6px;">Check back soon or add one from the admin panel.</p>
+        </div>
+
+        <!-- Vehicle grid -->
+        <div th:unless="${#lists.isEmpty(vehicles)}" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-7">
+            <div th:each="vehicle,stat : ${vehicles}"
+                 class="reveal"
+                 th:classappend="${stat.index == 0 ? ' reveal-d1' : (stat.index == 1 ? ' reveal-d2' : ' reveal-d3')}">
+                <div class="vehicle-card">
+                    <div class="vehicle-card-img-wrap">
+                        <img th:src="${vehicle.imageUrl != null and vehicle.imageUrl != '' ? vehicle.imageUrl : 'https://images.unsplash.com/photo-1542362567-b07e54358753?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}"
+                             th:alt="${vehicle.brand + ' ' + vehicle.model}">
+                        <span class="card-badge-featured">Featured</span>
+                        <div class="card-price-tag">
+                            LKR <span th:text="${#numbers.formatDecimal(vehicle.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                        </div>
+                    </div>
+                    <div class="vehicle-card-body">
+                        <div class="vehicle-brand-label" th:text="${vehicle.brand}"></div>
+                        <div class="vehicle-name" th:text="${vehicle.model + ' (' + vehicle.year + ')'}"></div>
+                        <div class="spec-pills">
+                            <span class="spec-pill">
+                                <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <span th:text="${vehicle.fuelType}"></span>
+                            </span>
+                            <span class="spec-pill">
+                                <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                                <span th:text="${vehicle.transmission}"></span>
+                            </span>
+                            <span class="spec-pill">
+                                <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span th:text="${#numbers.formatDecimal(vehicle.mileage, 0, 'COMMA', 0, 'POINT') + ' km'}"></span>
+                            </span>
+                            <span class="spec-pill">
+                                <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                                <span th:text="${vehicle.category}"></span>
+                            </span>
+                        </div>
+                        <a th:href="@{/vehicle/{id}(id=${vehicle.id})}" class="btn-card-detail">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     WHY CHOOSE US
+═══════════════════════════════════════════ -->
+<section class="am-section why-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14 reveal">
+            <div class="section-label" style="justify-content:center;">Why AutoMart</div>
+            <h2 class="section-title">Why Thousands Choose Us</h2>
+            <div class="section-divider mx-auto mt-3"></div>
+            <p class="section-sub mx-auto mt-4">We deliver quality, transparency and trust in every transaction</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div class="reveal reveal-d1"><div class="feature-card">
+                <div class="feature-icon-wrap" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);">🛡️</div>
+                <h4 style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:8px;">Trusted Dealers</h4>
+                <p style="font-size:0.85rem;color:#64748b;line-height:1.7;margin:0;">All dealers are verified and background-checked for your complete safety.</p>
+            </div></div>
+            <div class="reveal reveal-d2"><div class="feature-card">
+                <div class="feature-icon-wrap" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);">✅</div>
+                <h4 style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:8px;">Verified Vehicles</h4>
+                <p style="font-size:0.85rem;color:#64748b;line-height:1.7;margin:0;">Every listing is professionally inspected with full history disclosure.</p>
+            </div></div>
+            <div class="reveal reveal-d3"><div class="feature-card">
+                <div class="feature-icon-wrap" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">🔒</div>
+                <h4 style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:8px;">Secure Payments</h4>
+                <p style="font-size:0.85rem;color:#64748b;line-height:1.7;margin:0;">Industry-standard encryption keeps every transaction fully protected.</p>
+            </div></div>
+            <div class="reveal reveal-d4"><div class="feature-card">
+                <div class="feature-icon-wrap" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);">🎧</div>
+                <h4 style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:8px;">24/7 Support</h4>
+                <p style="font-size:0.85rem;color:#64748b;line-height:1.7;margin:0;">Our expert team is always ready to guide you through your journey.</p>
+            </div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SPARE PARTS PREVIEW
+═══════════════════════════════════════════ -->
+<section class="am-section parts-section" id="parts-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-12 reveal">
+            <div>
+                <div class="section-label">Parts &amp; Accessories</div>
+                <h2 class="section-title">Genuine Spare Parts</h2>
+                <div class="section-divider mt-3"></div>
+                <p class="section-sub mt-4">Quality OEM parts for all makes and models, shipped fast</p>
+            </div>
+            <a href="/spare-parts" class="btn-view-all flex-shrink-0">
+                View All Parts
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(spareParts)}" class="text-center py-16 reveal">
+            <div style="font-size:3.5rem;margin-bottom:16px;">🔧</div>
+            <h4 style="color:#334155;font-weight:800;font-size:1.1rem;">No spare parts listed yet</h4>
+            <a href="/spare-parts" style="color:#2563eb;font-size:0.88rem;font-weight:600;">Browse the full catalog →</a>
+        </div>
+
+        <!-- Parts grid -->
+        <div th:unless="${#lists.isEmpty(spareParts)}" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div th:each="part,stat : ${spareParts}"
+                 class="reveal"
+                 th:classappend="${stat.index == 0 ? ' reveal-d1' : (stat.index == 1 ? ' reveal-d2' : ' reveal-d3')}">
+                <div class="part-card">
+                    <div class="part-card-img">
+                        <img th:src="${part.imageUrl != null and part.imageUrl != '' ? part.imageUrl : 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}"
+                             th:alt="${part.name}">
+                    </div>
+                    <div style="padding:18px 20px;">
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <div>
+                                <div style="font-size:0.62rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#3b82f6;margin-bottom:3px;" th:text="${part.category}"></div>
+                                <h5 style="font-size:0.94rem;font-weight:800;color:#0f172a;margin:0;line-height:1.3;" th:text="${part.name}"></h5>
+                            </div>
+                            <span th:if="${part.stockQuantity > 0}"
+                                  style="font-size:0.62rem;background:#dcfce7;color:#16a34a;padding:3px 8px;border-radius:6px;font-weight:800;white-space:nowrap;flex-shrink:0;">In Stock</span>
+                            <span th:unless="${part.stockQuantity > 0}"
+                                  style="font-size:0.62rem;background:#fee2e2;color:#dc2626;padding:3px 8px;border-radius:6px;font-weight:800;white-space:nowrap;flex-shrink:0;">Out of Stock</span>
+                        </div>
+                        <p style="font-size:0.8rem;color:#64748b;margin:8px 0 14px;line-height:1.65;min-height:38px;"
+                           th:text="${#strings.abbreviate(part.description, 80)}"></p>
+                        <div class="flex items-center justify-between">
+                            <div style="font-size:1.05rem;font-weight:900;color:#0f172a;">
+                                LKR <span th:text="${#numbers.formatDecimal(part.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                            </div>
+                            <a th:href="@{/spare-parts/details/{id}(id=${part.id})}"
+                               style="font-size:0.76rem;font-weight:700;background:#0f172a;color:#fff;padding:8px 16px;border-radius:10px;text-decoration:none;transition:background 0.2s ease;"
+                               onmouseover="this.style.background='#1e3a5f'" onmouseout="this.style.background='#0f172a'">
+                                View Part
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════════ -->
+<section class="testimonials-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center mb-14 reveal">
+            <div class="section-label" style="color:#93c5fd;justify-content:center;">
+                <span style="background:#3b82f6;width:22px;height:2px;border-radius:2px;display:inline-block;"></span>
+                Testimonials
+            </div>
+            <h2 class="section-title" style="color:#ffffff;">What Our Customers Say</h2>
+            <div class="section-divider mx-auto mt-3"></div>
+            <p class="section-sub mx-auto mt-4" style="color:rgba(255,255,255,0.45);">Real reviews from verified AutoMart buyers and sellers</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="reveal reveal-d1">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"AutoMart made buying my first car completely stress-free. The vehicle history was transparent and the team was incredibly helpful throughout the entire process."</p>
+                    <div class="flex items-center gap-3 mt-auto">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-white flex-shrink-0 text-sm"
+                             style="background:linear-gradient(135deg,#3b82f6,#6366f1);">A</div>
+                        <div>
+                            <div class="testimonial-author">Ashan Perera</div>
+                            <div class="testimonial-role">Verified Buyer · Colombo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal reveal-d2">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"I sold my Honda in just 3 days through AutoMart! The process was seamless and I got the price I wanted. Highly recommend to anyone looking to sell."</p>
+                    <div class="flex items-center gap-3 mt-auto">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-white flex-shrink-0 text-sm"
+                             style="background:linear-gradient(135deg,#10b981,#059669);">S</div>
+                        <div>
+                            <div class="testimonial-author">Sanjana Fernando</div>
+                            <div class="testimonial-role">Verified Seller · Kandy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal reveal-d3">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★☆</div>
+                    <p class="testimonial-text">"The spare parts section is a gem. Got genuine Toyota parts at great prices with fast delivery to Galle. My go-to platform for all car parts."</p>
+                    <div class="flex items-center gap-3 mt-auto">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-white flex-shrink-0 text-sm"
+                             style="background:linear-gradient(135deg,#f59e0b,#d97706);">R</div>
+                        <div>
+                            <div class="testimonial-author">Rashid Malik</div>
+                            <div class="testimonial-role">Spare Parts Buyer · Galle</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CALL TO ACTION
+═══════════════════════════════════════════ -->
+<section class="cta-section" th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}">
+    <div class="cta-glow-1"></div>
+    <div class="cta-glow-2"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style="position:relative;z-index:5;">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
+            <div class="reveal lg:max-w-xl">
+                <div class="section-label" style="color:#93c5fd;">
+                    <span style="background:#3b82f6;width:22px;height:2px;border-radius:2px;display:inline-block;"></span>
+                    Sell Your Car
+                </div>
+                <h2 class="section-title" style="color:#ffffff;font-size:clamp(1.9rem,4vw,2.8rem);">Ready to Sell<br>Your Vehicle?</h2>
+                <div class="section-divider mt-3"></div>
+                <p style="color:rgba(255,255,255,0.55);font-size:1rem;max-width:440px;line-height:1.75;margin-top:16px;">
+                    List your car on Sri Lanka's fastest-growing marketplace. Get real offers from verified buyers within 24 hours — completely free.
+                </p>
+            </div>
+            <div class="reveal reveal-d2 flex flex-wrap gap-3 justify-center lg:justify-end">
+                <a href="/sell" class="btn-hero-primary" style="font-size:0.95rem;padding:15px 32px;">
+                    Start Selling Free
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </a>
+                <a href="/contact" class="btn-hero-outline" style="font-size:0.95rem;padding:15px 28px;">
+                    Talk to Us
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<!-- Ripple keyframe -->
+<style>
+@keyframes ripple {
+    to { transform: scale(2.5); opacity: 0; }
+}
+</style>
+
+<script th:src="@{/js/home.js}" defer></script>
+
+</body>
+</html>
